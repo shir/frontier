@@ -7,10 +7,13 @@
   "private": true,
   "scripts": {
     "build": "tsc",
-    "start": "node build/dist/index.js"
+    "start": "node build/dist/index.js",
+    "lint": "tslint 'src/**/*.ts'"
   },
   "dependencies": {},
   "devDependencies": {
+    "tslint": "^5.9.1",
+    "tslint-config-airbnb": "^5.8.0",
     "typescript": "^2.8.1"
   }
 }
