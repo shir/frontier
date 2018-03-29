@@ -1,13 +1,12 @@
 import * as http from 'http';
 
-// const DNS_PORT   = 23400;
 const HTTP_PORT  = 23401;
 // const HTTPS_PORT = 23402;
 
 function createHttpServer() {
-  const httpServer = http.createServer();
+  const server = http.createServer();
 
-  httpServer.on('request', (request, response) => {
+  server.on('request', (request, response) => {
     console.log('http request.headers: ', request.headers);
 
     const requestOptions = {
@@ -29,15 +28,15 @@ function createHttpServer() {
     // response.end();
   });
 
-  httpServer.on('close', () => {
+  server.on('close', () => {
     console.log('Stopping HTTP server');
   });
 
-  httpServer.listen(HTTP_PORT, () => {
-    console.log(`Node server created at port ${HTTP_PORT}`);
+  server.listen(HTTP_PORT, () => {
+    console.log(`HTTP server started on port ${HTTP_PORT}`);
   });
 
-  return httpServer;
+  return server;
 }
 
 export { createHttpServer };
