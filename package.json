@@ -4,5 +4,13 @@
   "main": "build/dist/index.js",
   "author": "Ildar Shaynurov",
   "license": "MIT",
-  "private": true
+  "private": true,
+  "scripts": {
+    "build": "tsc",
+    "start": "node build/dist/index.js"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "typescript": "^2.8.1"
+  }
 }
