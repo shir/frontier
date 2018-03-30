@@ -1,0 +1,14 @@
+[
+  {
+    "name":      "test-project",
+    "port":      5000,
+    "directory": "/full/path/to/test-project",
+    "runCmd":    "PORT=5000 yarn run start"
+  },
+  {
+    "name":      "test-project-2",
+    "port":      5001,
+    "directory": "/full/path/to/test-project-2",
+    "runCmd":    "PORT=5001 yarn run start"
+  }
+]
