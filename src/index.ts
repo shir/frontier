@@ -13,7 +13,7 @@ const appManager = new ApplicationManager();
 
 appManager.addApplications(appsParams);
 
-console.log('Applications loaded: ', appManager.apps.map(a => a.name).join(', '));
+appManager.runAll();
 
 const dnsServer  = createDNSServer();
 const httpServer = createHttpServer(appManager);
@@ -21,4 +21,6 @@ const httpServer = createHttpServer(appManager);
 process.on('SIGINT', () => {
   dnsServer.socket.close();
   httpServer.close();
+
+  appManager.stopAll();
 });

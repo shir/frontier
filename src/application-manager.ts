@@ -20,6 +20,14 @@ class ApplicationManager {
   appByHostname = (hostname: string) => {
     return this.apps.find(a => a.hostname === hostname);
   }
+
+  runAll = () => {
+    this.apps.forEach(a => a.run());
+  }
+
+  stopAll = () => {
+    this.apps.forEach(a => a.stop());
+  }
 }
 
 export default ApplicationManager;
