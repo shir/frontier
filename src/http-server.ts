@@ -1,17 +1,28 @@
 import * as http from 'http';
 
+import Application from './application';
+
 const HTTP_PORT  = 23401;
 // const HTTPS_PORT = 23402;
 
-function createHttpServer() {
+function createHttpServer(applications: Application[]) {
   const server = http.createServer();
 
   server.on('request', (request, response) => {
     console.log('http request.headers: ', request.headers);
 
+    const app = applications.find(a => a.hostname === request.headers.host);
+
+    if (!app) {
+      response.writeHead(404, { 'Content-Type':'text/plain' });
+      response.write(`Application for hostname ${request.headers.host} not found`);
+      response.end();
+      return;
+    }
+
     const requestOptions = {
       host:    'localhost',
-      port:    3000,
+      port:    app.port,
       path:    request.url,
       method:  request.method,
       headers: request.headers,
@@ -23,9 +34,6 @@ function createHttpServer() {
       response.writeHead(proxyResponse.statusCode, proxyResponse.headers);
     });
     request.pipe(proxyRequest);
-    // response.writeHead(200, { 'Content-Type':'text/plain' });
-    // response.write('Hello world');
-    // response.end();
   });
 
   server.on('close', () => {
