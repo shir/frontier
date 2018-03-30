@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 
-import Application, { ApplicationParams } from './application';
+import ApplicationManager from './application-manager';
+import { ApplicationParams } from './application';
 
 import { createHttpServer } from './http-server';
 import { createDNSServer } from './dns-server';
@@ -8,12 +9,14 @@ import { createDNSServer } from './dns-server';
 const APPS_FILE = './.frontier.json';
 
 const appsParams: ApplicationParams[] = JSON.parse(fs.readFileSync(APPS_FILE, 'utf8'));
-const apps: Application[] = appsParams.map(params => new Application(params));
+const appManager = new ApplicationManager();
 
-console.log('Applications loaded: ', apps.map(a => a.name).join(', '));
+appManager.addApplications(appsParams);
+
+console.log('Applications loaded: ', appManager.apps.map(a => a.name).join(', '));
 
 const dnsServer  = createDNSServer();
-const httpServer = createHttpServer(apps);
+const httpServer = createHttpServer(appManager);
 
 process.on('SIGINT', () => {
   dnsServer.socket.close();

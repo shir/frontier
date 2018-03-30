@@ -1,17 +1,18 @@
 import * as http from 'http';
 
-import Application from './application';
+import ApplicationManager from './application-manager';
 
 const HTTP_PORT  = 23401;
 // const HTTPS_PORT = 23402;
 
-function createHttpServer(apps: Application[]) {
+function createHttpServer(manager: ApplicationManager) {
   const server = http.createServer();
 
   server.on('request', (request, response) => {
-    const app = apps.find(a => a.hostname === request.headers.host);
+    const app = manager.appByHostname(request.headers.host);
 
     if (!app) {
+      console.warn(`[HTTP] ${request.headers.host} NOT FOUND!`);
       response.writeHead(404, { 'Content-Type':'text/plain' });
       response.write(`Application for hostname ${request.headers.host} not found`);
       response.end();
