@@ -29,4 +29,4 @@ class Application {
   }
 }
 
-export default Application;
+export { Application as default, ApplicationParams };
