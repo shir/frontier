@@ -1,6 +1,6 @@
 import * as dns from 'dns2';
 
-const DNS_PORT   = 23400;
+const DNS_PORT = 23400;
 
 function createDNSServer() {
   const server = dns.createServer();
@@ -23,6 +23,10 @@ function createDNSServer() {
     });
     console.log('response: ', response);
     send(response);
+  });
+
+  server.socket.on('close', () => {
+    console.log('Stopping DNS server');
   });
 
   server.listen(DNS_PORT, () => {

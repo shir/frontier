@@ -1,7 +1,9 @@
 declare module 'dns2' {
+  import { Socket } from 'dgram';
   export type listener = (...args: any[]) => void;
 
   export interface Server {
+    socket: Socket;
     on: (event: string | symbol, listener: listener) => void;
     listen: (port: number | string, callbak: listener) => void;
     send: (response: Packet) => void;
