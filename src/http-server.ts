@@ -34,11 +34,20 @@ function createHttpServer(manager: ApplicationManager) {
       });
       response.writeHead(proxyResponse.statusCode, proxyResponse.headers);
     });
+    proxyRequest.on('error', (e) => {
+      console.error(`[HTTP] error on requesting "${app.name}" on port ${app.port}: ${e}`);
+      response.writeHead(404, { 'Content-Type':'text/plain' });
+      response.write(`Error on accessing "${app.name}" on port ${app.port}: ${e.message}`);
+      response.end();
+    });
     request.pipe(proxyRequest);
   });
 
   server.on('close', () => {
     console.log('[HTTP] connection closed');
+  });
+  server.on('error', (e) => {
+    console.error(`[HTTP] error: ${e}`);
   });
 
   server.listen(HTTP_PORT, () => {
