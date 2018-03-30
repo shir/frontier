@@ -6,7 +6,6 @@ function createDNSServer() {
   const server = dns.createServer();
 
   server.on('request', (request, send) => {
-    console.log('request: ', request);
     const response = new dns.Packet(request);
 
     const question = response.questions[0];
@@ -14,23 +13,26 @@ function createDNSServer() {
     response.header['qr'] = 1;
     response.header['ra'] = 1;
 
+    const hostname = question ? question.name : null;
+    console.log(`[DNS] resolve ${hostname}`);
+
     response.answers.push({
-      name:    question ? question.name : null,
+      name:    hostname,
       class:   dns.Packet.CLASS.IN,
       type:    dns.Packet.TYPE.A,
       address: '127.0.0.1',
       ttl:     300,
     });
-    console.log('response: ', response);
+
     send(response);
   });
 
   server.socket.on('close', () => {
-    console.log('Stopping DNS server');
+    console.log('[DNS] connection closed');
   });
 
   server.listen(DNS_PORT, () => {
-    console.log(`DNS server started on port ${DNS_PORT}`);
+    console.log(`[DNS] server listen on port ${DNS_PORT}`);
   });
 
   return server;

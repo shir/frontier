@@ -9,8 +9,6 @@ function createHttpServer(apps: Application[]) {
   const server = http.createServer();
 
   server.on('request', (request, response) => {
-    console.log('http request.headers: ', request.headers);
-
     const app = apps.find(a => a.hostname === request.headers.host);
 
     if (!app) {
@@ -19,6 +17,8 @@ function createHttpServer(apps: Application[]) {
       response.end();
       return;
     }
+
+    console.log(`[HTTP] ${app.name}: ${request.url}`);
 
     const requestOptions = {
       host:    'localhost',
@@ -37,11 +37,11 @@ function createHttpServer(apps: Application[]) {
   });
 
   server.on('close', () => {
-    console.log('Stopping HTTP server');
+    console.log('[HTTP] connection closed');
   });
 
   server.listen(HTTP_PORT, () => {
-    console.log(`HTTP server started on port ${HTTP_PORT}`);
+    console.log(`[HTTP] server listen on port ${HTTP_PORT}`);
   });
 
   return server;
