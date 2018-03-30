@@ -5,13 +5,13 @@ import Application from './application';
 const HTTP_PORT  = 23401;
 // const HTTPS_PORT = 23402;
 
-function createHttpServer(applications: Application[]) {
+function createHttpServer(apps: Application[]) {
   const server = http.createServer();
 
   server.on('request', (request, response) => {
     console.log('http request.headers: ', request.headers);
 
-    const app = applications.find(a => a.hostname === request.headers.host);
+    const app = apps.find(a => a.hostname === request.headers.host);
 
     if (!app) {
       response.writeHead(404, { 'Content-Type':'text/plain' });
