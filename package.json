@@ -8,6 +8,7 @@
   "scripts": {
     "build": "tsc",
     "start": "node build/dist",
+    "clear": "rm -rf build/dist",
     "lint": "tslint 'src/**/*.ts'"
   },
   "dependencies": {
