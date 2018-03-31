@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import ApplicationManager from './application-manager';
 import { ApplicationParams } from './application';
 
-import { createHttpServer } from './http-server';
+import HTTPServer from './http-server';
 import { createDNSServer } from './dns-server';
 
 const APPS_FILE = './.frontier.json';
@@ -11,16 +11,31 @@ const APPS_FILE = './.frontier.json';
 const appsParams: ApplicationParams[] = JSON.parse(fs.readFileSync(APPS_FILE, 'utf8'));
 const appManager = new ApplicationManager();
 
-appManager.addApplications(appsParams);
+try {
+  appManager.addApplications(appsParams);
 
-appManager.runAll();
+  appManager.runAll();
 
-const dnsServer  = createDNSServer();
-const httpServer = createHttpServer(appManager);
+  const dnsServer  = createDNSServer();
+  const httpServer = new HTTPServer(appManager);
 
-process.on('SIGINT', () => {
-  dnsServer.socket.close();
-  httpServer.close();
+  httpServer.start();
 
+  process.on('SIGINT', () => {
+    dnsServer.socket.close();
+    httpServer.stop();
+
+    appManager.stopAll();
+  });
+
+  process.on('uncaughtException', (err) => {
+    if (appManager) {
+      appManager.stopAll();
+    }
+
+    throw err;
+  });
+} catch (e) {
   appManager.stopAll();
-});
+  throw e;
+}
