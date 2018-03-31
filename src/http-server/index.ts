@@ -1,10 +1,9 @@
 import * as http from 'http';
 
+import config from '../config';
+
 import ApplicationManager from '../application-manager';
 import Application from '../application';
-
-const HTTP_PORT  = 23401;
-// const HTTPS_PORT = 23402;
 
 class HTTPServer {
   appManager: ApplicationManager;
@@ -83,8 +82,8 @@ class HTTPServer {
     this.server.on('close',   this.handleClose);
     this.server.on('error',   this.handleError);
 
-    this.server.listen(HTTP_PORT, () => {
-      console.log(`[HTTP] server listen on port ${HTTP_PORT}`);
+    this.server.listen(config.http_server_port, () => {
+      console.log(`[HTTP] server listen on port ${config.http_server_port}`);
     });
   }
 

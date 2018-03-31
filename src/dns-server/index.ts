@@ -1,6 +1,6 @@
 import * as dns from 'dns2';
 
-const DNS_PORT = 23400;
+import config from '../config';
 
 class DNSServer {
   public server: dns.Server | null = null;
@@ -37,8 +37,8 @@ class DNSServer {
     this.server.on('request', this.handleRequest);
     this.server.socket.on('close', this.handleClose);
 
-    this.server.listen(DNS_PORT, () => {
-      console.log(`[DNS] server listen on port ${DNS_PORT}`);
+    this.server.listen(config.dns_server_port, () => {
+      console.log(`[DNS] server listen on port ${config.dns_server_port}`);
     });
   }
 
