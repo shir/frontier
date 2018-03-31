@@ -4,38 +4,35 @@ import ApplicationManager from './application-manager';
 import { ApplicationParams } from './application';
 
 import HTTPServer from './http-server';
-import { createDNSServer } from './dns-server';
+import DNSServer  from './dns-server';
 
 const APPS_FILE = './.frontier.json';
 
 const appsParams: ApplicationParams[] = JSON.parse(fs.readFileSync(APPS_FILE, 'utf8'));
 const appManager = new ApplicationManager();
+const dnsServer  = new DNSServer();
+const httpServer = new HTTPServer(appManager);
+
 
 try {
   appManager.addApplications(appsParams);
 
   appManager.runAll();
 
-  const dnsServer  = createDNSServer();
-  const httpServer = new HTTPServer(appManager);
-
   httpServer.start();
+  dnsServer.start();
 
   process.on('SIGINT', () => {
-    dnsServer.socket.close();
+    dnsServer.stop();
     httpServer.stop();
 
     appManager.stopAll();
   });
 
-  process.on('uncaughtException', (err) => {
-    if (appManager) {
-      appManager.stopAll();
-    }
-
-    throw err;
-  });
 } catch (e) {
+  dnsServer.stop();
+  httpServer.stop();
   appManager.stopAll();
+
   throw e;
 }
