@@ -1,38 +1,12 @@
-import * as fs from 'fs';
+import Frontier from './frontier';
 
-import ApplicationManager from './application-manager';
-import { ApplicationParams } from './application';
-
-import config from './config';
-
-import HTTPServer from './http-server';
-import DNSServer  from './dns-server';
-
-const appsParams: ApplicationParams[] = JSON.parse(fs.readFileSync(config.apps_file, 'utf8'));
-const appManager = new ApplicationManager();
-const dnsServer  = new DNSServer();
-const httpServer = new HTTPServer(appManager);
-
+const frontier = new Frontier();
 
 try {
-  appManager.addApplications(appsParams);
+  frontier.start();
 
-  appManager.runAll();
-
-  httpServer.start();
-  dnsServer.start();
-
-  process.on('SIGINT', () => {
-    dnsServer.stop();
-    httpServer.stop();
-
-    appManager.stopAll();
-  });
-
+  process.on('SIGINT', frontier.stop);
 } catch (e) {
-  dnsServer.stop();
-  httpServer.stop();
-  appManager.stopAll();
-
+  frontier.stop();
   throw e;
 }
