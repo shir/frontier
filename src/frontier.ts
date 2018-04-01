@@ -1,7 +1,4 @@
-import * as fs from 'fs';
-
 import ApplicationManager from './application-manager';
-import { ApplicationParams } from './application';
 
 import config from './config';
 
@@ -19,12 +16,8 @@ class Frontier {
     this.httpServer = new HTTPServer(this.appManager);
   }
 
-  private getAppParams(file: string): ApplicationParams[] {
-    return JSON.parse(fs.readFileSync(file, 'utf8'));
-  }
-
   start = () => {
-    this.appManager.addApplications(this.getAppParams(config.apps_file));
+    this.appManager.addApplications(config.applications);
 
     this.appManager.runAll();
 

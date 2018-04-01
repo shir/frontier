@@ -1,9 +1,10 @@
-import Application, { ApplicationParams } from './application';
+import Application from './application';
+import { ApplicationConfig } from './config';
 
 class ApplicationManager {
   readonly apps: Application[] = [];
 
-  addApplication = (appParams: ApplicationParams | Application) => {
+  addApplication = (appParams: ApplicationConfig | Application) => {
     let app = null;
     if (appParams instanceof Application) {
       app = appParams;
@@ -13,7 +14,7 @@ class ApplicationManager {
     this.apps.push(app);
   }
 
-  addApplications = (appsParams: ApplicationParams[]) => {
+  addApplications = (appsParams: ApplicationConfig[]) => {
     appsParams.forEach(params => this.addApplication(params));
   }
 

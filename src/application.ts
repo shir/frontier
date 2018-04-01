@@ -1,12 +1,6 @@
 import * as childProcess from 'child_process';
 
-interface ApplicationParams {
-  name:       string;
-  hostname?:  string;
-  port:       number;
-  directory?: string;
-  runCmd:     string;
-}
+import { ApplicationConfig } from './config';
 
 class Application {
   name:      string;
@@ -17,7 +11,7 @@ class Application {
 
   process:   childProcess.ChildProcess | null = null;
 
-  constructor(params: ApplicationParams) {
+  constructor(params: ApplicationConfig) {
     this.name      = params.name;
     this.hostname  = params.hostname || `${params.name}.test`;
     this.port      = params.port;
@@ -57,4 +51,4 @@ class Application {
   }
 }
 
-export { Application as default, ApplicationParams };
+export { Application as default };

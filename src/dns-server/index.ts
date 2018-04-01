@@ -37,8 +37,8 @@ class DNSServer {
     this.server.on('request', this.handleRequest);
     this.server.socket.on('close', this.handleClose);
 
-    this.server.listen(config.dns_server_port, () => {
-      console.log(`[DNS] server listen on port ${config.dns_server_port}`);
+    this.server.listen(config.dnsServerPort, () => {
+      console.log(`[DNS] server listen on port ${config.dnsServerPort}`);
     });
   }
 

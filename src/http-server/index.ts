@@ -82,8 +82,8 @@ class HTTPServer {
     this.server.on('close',   this.handleClose);
     this.server.on('error',   this.handleError);
 
-    this.server.listen(config.http_server_port, () => {
-      console.log(`[HTTP] server listen on port ${config.http_server_port}`);
+    this.server.listen(config.httpServerPort, () => {
+      console.log(`[HTTP] server listen on port ${config.httpServerPort}`);
     });
   }
 
