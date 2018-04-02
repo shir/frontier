@@ -1,5 +1,7 @@
 import * as childProcess from 'child_process';
 
+import logger from './logger';
+
 import { ApplicationConfig } from './config';
 
 class Application {
@@ -20,7 +22,7 @@ class Application {
   }
 
   run = (): void => {
-    console.log(`[${this.name}] run '${this.runCmd}' `
+    logger.info(`[${this.name}] run '${this.runCmd}' `
       + `in folder '${this.directory}' `
       + `using PORT=${this.port}`);
 
@@ -35,11 +37,11 @@ class Application {
     });
 
     this.process.on('exit', (code) => {
-      console.log(`[${this.name}] child process exit with code: ${code}`);
+      logger.info(`[${this.name}] child process exit with code: ${code}`);
       this.process = null;
     });
     this.process.on('error', (e) => {
-      console.error(`[${this.name}] child process error: `, e.message);
+      logger.error(`[${this.name}] child process error: `, e.message);
       this.process = null;
     });
   }
