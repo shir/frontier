@@ -13,16 +13,25 @@ interface ApplicationConfig {
 }
 
 class Config {
-  public dnsServerPort   = 23400;
-  public httpServerPort  = 23401;
-  public httpsServerPort = 23402;
+  public readonly dnsServerPort: number;
+  public readonly httpServerPort: number;
+  public readonly httpsServerPort: number;
 
-  public configFilePath = path.join(os.homedir(), FRONTIER_DIR, 'config.json');
-  public logsDir        = path.join(os.homedir(), FRONTIER_DIR, 'logs');
+  public readonly configFilePath: string;
+  public readonly logsDir: string;
+  public readonly frontierLogFilePath: string;
 
-  public applications: ApplicationConfig[];
+  public readonly applications: ApplicationConfig[];
 
   constructor() {
+    this.dnsServerPort   = 23400;
+    this.httpServerPort  = 23401;
+    this.httpsServerPort = 23402;
+
+    this.configFilePath      = path.join(os.homedir(), FRONTIER_DIR, 'config.json');
+    this.logsDir             = path.join(os.homedir(), FRONTIER_DIR, 'logs');
+    this.frontierLogFilePath = path.join(this.logsDir, 'frontier.log');
+
     this.applications = JSON.parse(fs.readFileSync(this.configFilePath, 'utf8')).applications;
   }
 }
