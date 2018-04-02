@@ -1,6 +1,7 @@
 {
   "name": "frontier",
   "version": "0.0.1",
+  "repository": "github:shir/frontier",
   "main": "build/dist/index.js",
   "author": "Ildar Shaynurov",
   "license": "MIT",
