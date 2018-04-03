@@ -9,7 +9,8 @@ interface ApplicationConfig {
   hostname?:  string;
   port:       number;
   directory?: string;
-  runCmd:     string;
+  command:    string;
+  args?:      string[];
 }
 
 class Config {

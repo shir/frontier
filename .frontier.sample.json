@@ -2,13 +2,15 @@
   {
     "name":      "test-project",
     "port":      5000,
-    "directory": "/full/path/to/test-project",
-    "runCmd":    "PORT=5000 yarn run start"
+    "directory": "/full/path/to/js-project",
+    "command":   "yarn",
+    "args":      ["run", "start"]
   },
   {
     "name":      "test-project-2",
     "port":      5001,
-    "directory": "/full/path/to/test-project-2",
-    "runCmd":    "PORT=5001 yarn run start"
+    "directory": "/full/path/to/rails-project",
+    "command":   "rvm",
+    "args":      ["in", "/full/path/to/rails-project", "do", "bundle", "exec", "rails", "server", "-p", "$PORT"]
   }
 ]
