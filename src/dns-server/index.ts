@@ -1,6 +1,7 @@
 import * as dns from 'dns2';
 
 import config from '../config';
+import logger from '../logger';
 
 class DNSServer {
   public server: dns.Server | null = null;
@@ -14,7 +15,7 @@ class DNSServer {
     response.header['ra'] = 1;
 
     const hostname = question ? question.name : null;
-    console.log(`[DNS] resolve ${hostname}`);
+    logger.debug(`[DNS] resolve ${hostname}`);
 
     response.answers.push({
       name:    hostname,
@@ -28,7 +29,7 @@ class DNSServer {
   }
 
   private handleClose = () => {
-    console.log('[DNS] connection closed');
+    logger.info('[DNS] connection closed');
   }
 
   start = () => {
@@ -38,7 +39,7 @@ class DNSServer {
     this.server.socket.on('close', this.handleClose);
 
     this.server.listen(config.dnsServerPort, () => {
-      console.log(`[DNS] server listen on port ${config.dnsServerPort}`);
+      logger.info(`[DNS] server listen on port ${config.dnsServerPort}`);
     });
   }
 

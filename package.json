@@ -1,6 +1,7 @@
 {
   "name": "frontier",
   "version": "0.0.1",
+  "repository": "github:shir/frontier",
   "main": "build/dist/index.js",
   "author": "Ildar Shaynurov",
   "license": "MIT",
@@ -12,10 +13,13 @@
     "lint": "tslint 'src/**/*.ts'"
   },
   "dependencies": {
-    "dns2": "^1.3.0"
+    "dns2": "^1.3.0",
+    "node-pty": "^0.7.4",
+    "winston": "^2.4.1"
   },
   "devDependencies": {
     "@types/node": "^9.6.1",
+    "@types/winston": "^2.3.8",
     "tslint": "^5.9.1",
     "tslint-config-airbnb": "^5.8.0",
     "typescript": "^2.8.1"

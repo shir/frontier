@@ -1,53 +1,85 @@
-import * as childProcess from 'child_process';
+import * as path from 'path';
+import * as fs from 'fs';
+import * as pty from 'node-pty';
+import { ITerminal } from 'node-pty/lib/interfaces';
 
-import { ApplicationConfig } from './config';
+import logger from './logger';
+import config, { ApplicationConfig } from './config';
 
 class Application {
   name:      string;
   hostname:  string;
   port:      number;
   directory: string;
-  runCmd:    string;
+  command:   string;
+  args:      string[];
+  logFile:   string;
 
-  process:   childProcess.ChildProcess | null = null;
+  private process:   ITerminal | null = null;
+  private logStream: fs.WriteStream | null = null;
 
   constructor(params: ApplicationConfig) {
     this.name      = params.name;
     this.hostname  = params.hostname || `${params.name}.test`;
     this.port      = params.port;
     this.directory = params.directory || './';
-    this.runCmd    = params.runCmd;
+    this.command   = params.command;
+    this.args      = params.args ? params.args.map(a => a === '$PORT' ? String(this.port) : a) : [];
+    this.logFile   = path.join(config.logsDir, `${this.name}.log`);
+  }
+
+  logOutput = (appProcess: ITerminal): void => {
+    this.logStream = fs.createWriteStream(this.logFile, { flags: 'a' });
+
+    appProcess.on('data', (data) => {
+      process.stdout.write(data);
+
+      if (this.logStream) {
+        this.logStream.write(data);
+      }
+    });
   }
 
   run = (): void => {
-    console.log(`[${this.name}] run '${this.runCmd}' `
+    logger.info(`[${this.name}] run '${this.command} ${this.args.join(' ')}' `
       + `in folder '${this.directory}' `
-      + `using PORT=${this.port}`);
+      + `using $PORT=${this.port}`);
 
-    this.process = childProcess.spawn(this.runCmd, [], {
-      shell: true,
-      stdio: 'inherit',
-      cwd:   this.directory,
-      env:   {
+    // I use `node-pty.spawn` instean `ChildProcess.spawn` because
+    // when used `ChildProcess.spawn` with piped stdout `fully-buffered` is work
+    // but using pty allows to keep `line-buffered`
+    // See https://eklitzke.org/stdout-buffering for explanation.
+    this.process = pty.spawn(this.command, this.args, {
+      cwd:  this.directory,
+      cols: process.stdout.columns,
+      rows: process.stdout.rows,
+      env:  {
         ...process.env,
-        PORT: this.port,
+        PORT: String(this.port),
       },
     });
 
+    this.logOutput(this.process);
+
     this.process.on('exit', (code) => {
-      console.log(`[${this.name}] child process exit with code: ${code}`);
+      logger.info(`[${this.name}] child process exit with code: ${code}`);
       this.process = null;
     });
     this.process.on('error', (e) => {
-      console.error(`[${this.name}] child process error: `, e.message);
+      logger.error(`[${this.name}] child process error: `, e.message);
       this.process = null;
     });
   }
 
   stop = (): void => {
-    if (!this.process) return;
-
-    this.process.kill();
+    if (this.logStream) {
+      this.logStream.end();
+      this.logStream = null;
+    }
+    if (this.process) {
+      this.process.kill('SIGTERM');
+      this.process = null;
+    }
   }
 }
 

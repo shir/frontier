@@ -1,6 +1,7 @@
 import * as http from 'http';
 
 import config from '../config';
+import logger from '../logger';
 
 import ApplicationManager from '../application-manager';
 import Application from '../application';
@@ -14,7 +15,7 @@ class HTTPServer {
   }
 
   private showError = (response: http.ServerResponse, error: string, httpCode: number = 404) => {
-    console.log(`[HTTP] ${error}`);
+    logger.error(`[HTTP] ${error}`);
     response.writeHead(httpCode, { 'Content-Type':'text/plain' });
     response.write(error);
     response.end();
@@ -60,17 +61,17 @@ class HTTPServer {
       return;
     }
 
-    console.log(`[HTTP] ${app.name}: ${request.url}`);
+    logger.debug(`[HTTP] ${app.name}: ${request.url}`);
 
     this.createPipe(app, request, response);
   }
 
   private handleClose = () => {
-    console.log('[HTTP] connection closed');
+    logger.info('[HTTP] connection closed');
   }
 
   private handleError = (e: Error) => {
-    console.error(`[HTTP] error: ${e}`);
+    logger.error(`[HTTP] error: ${e}`);
   }
 
   start = (): void => {
@@ -83,7 +84,7 @@ class HTTPServer {
     this.server.on('error',   this.handleError);
 
     this.server.listen(config.httpServerPort, () => {
-      console.log(`[HTTP] server listen on port ${config.httpServerPort}`);
+      logger.info(`[HTTP] server listen on port ${config.httpServerPort}`);
     });
   }
 
