@@ -7,16 +7,18 @@ import logger from './logger';
 import config, { ApplicationConfig } from './config';
 
 class Application {
-  name:      string;
-  hostname:  string;
-  port:      number;
-  directory: string;
-  command:   string;
-  args:      string[];
-  logFile:   string;
+  name:       string;
+  hostname:   string;
+  port:       number;
+  directory:  string;
+  command:    string;
+  args:       string[];
+  logFile:    string;
+  watchFile?: string;
 
   private process:   ITerminal | null = null;
   private logStream: fs.WriteStream | null = null;
+  private watcher:   fs.FSWatcher | null = null;
 
   constructor(params: ApplicationConfig) {
     this.name      = params.name;
@@ -26,6 +28,7 @@ class Application {
     this.command   = params.command;
     this.args      = this.replaceEnvs(params.args || []);
     this.logFile   = path.join(config.logsDir, `${this.name}.log`);
+    this.watchFile = params.watchFile ? path.join(this.directory, params.watchFile) : undefined;
   }
 
   private replaceEnvs = (args: string[]): string[] => {
@@ -53,6 +56,13 @@ class Application {
     });
   }
 
+  private watch = () => {
+    if (!this.watchFile) { return; }
+
+    logger.info(`[${this.name}] watching file ${this.watchFile}`);
+    this.watcher = fs.watch(this.watchFile, () => this.restart());
+  }
+
   run = (): void => {
     logger.info(`[${this.name}] run '${this.command} ${this.args.join(' ')}' `
       + `in directory '${this.directory}' `
@@ -74,6 +84,7 @@ class Application {
     });
 
     this.logOutput(this.process);
+    this.watch();
 
     this.process.on('exit', (code) => {
       logger.info(`[${this.name}] child process exit with code: ${code}`);
@@ -86,6 +97,11 @@ class Application {
   }
 
   stop = (): void => {
+    logger.info(`[${this.name}] stop`);
+    if (this.watcher) {
+      this.watcher.close();
+      this.watcher = null;
+    }
     if (this.logStream) {
       this.logStream.end();
       this.logStream = null;
@@ -94,6 +110,11 @@ class Application {
       this.process.kill('SIGTERM');
       this.process = null;
     }
+  }
+
+  restart = (): void => {
+    this.stop();
+    this.run();
   }
 }
 

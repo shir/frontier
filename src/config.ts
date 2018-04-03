@@ -11,6 +11,7 @@ interface ApplicationConfig {
   directory?: string;
   command:    string;
   args?:      string[];
+  watchFile?: string;
 }
 
 class Config {

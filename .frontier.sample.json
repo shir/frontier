@@ -10,6 +10,7 @@
     "name":      "test-project-2",
     "port":      5001,
     "directory": "/full/path/to/rails-project",
+    "watchFile": "tmp/restart.txt",
     "command":   "rvm",
     "args":      ["in", "$DIR", "do", "bundle", "exec", "rails", "server", "-p", "$PORT"]
   }
