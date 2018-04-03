@@ -11,6 +11,6 @@
     "port":      5001,
     "directory": "/full/path/to/rails-project",
     "command":   "rvm",
-    "args":      ["in", "/full/path/to/rails-project", "do", "bundle", "exec", "rails", "server", "-p", "$PORT"]
+    "args":      ["in", "$DIR", "do", "bundle", "exec", "rails", "server", "-p", "$PORT"]
   }
 ]

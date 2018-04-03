@@ -24,11 +24,24 @@ class Application {
     this.port      = params.port;
     this.directory = params.directory || './';
     this.command   = params.command;
-    this.args      = params.args ? params.args.map(a => a === '$PORT' ? String(this.port) : a) : [];
+    this.args      = this.replaceEnvs(params.args || []);
     this.logFile   = path.join(config.logsDir, `${this.name}.log`);
   }
 
-  logOutput = (appProcess: ITerminal): void => {
+  private replaceEnvs = (args: string[]): string[] => {
+    return args.map((arg:string) => {
+      switch (arg) {
+        case '$PORT':
+          return String(this.port);
+        case '$DIR':
+          return String(this.directory);
+        default:
+          return arg;
+      }
+    });
+  }
+
+  private logOutput = (appProcess: ITerminal): void => {
     this.logStream = fs.createWriteStream(this.logFile, { flags: 'a' });
 
     appProcess.on('data', (data) => {
@@ -42,7 +55,7 @@ class Application {
 
   run = (): void => {
     logger.info(`[${this.name}] run '${this.command} ${this.args.join(' ')}' `
-      + `in folder '${this.directory}' `
+      + `in directory '${this.directory}' `
       + `using $PORT=${this.port}`);
 
     // I use `node-pty.spawn` instean `ChildProcess.spawn` because
@@ -56,6 +69,7 @@ class Application {
       env:  {
         ...process.env,
         PORT: String(this.port),
+        DIR:  this.directory,
       },
     });
 
