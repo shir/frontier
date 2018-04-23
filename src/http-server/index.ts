@@ -49,21 +49,23 @@ class HTTPServer {
   }
 
   private handleRequest = (request: http.IncomingMessage, response: http.ServerResponse): void => {
-    if (!request.headers.host) {
-      this.showError(response, `No host in request!`);
-      return;
+    try {
+      if (!request.headers.host) {
+        throw new Error(`No host in request!`);
+      }
+
+      const app = this.appManager.appByHostname(request.headers.host);
+
+      if (!app) {
+        throw new Error(`Application for hostname ${request.headers.host} not found`);
+      }
+
+      logger.debug(`[HTTP] ${app.name}: ${request.url}`);
+
+      this.createPipe(app, request, response);
+    } catch (e) {
+      this.showError(response, e.message);
     }
-
-    const app = this.appManager.appByHostname(request.headers.host);
-
-    if (!app) {
-      this.showError(response, `Application for hostname ${request.headers.host} not found`);
-      return;
-    }
-
-    logger.debug(`[HTTP] ${app.name}: ${request.url}`);
-
-    this.createPipe(app, request, response);
   }
 
   private handleClose = () => {
