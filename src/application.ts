@@ -3,6 +3,8 @@ import * as fs from 'fs';
 import * as pty from 'node-pty';
 import { ITerminal } from 'node-pty/lib/interfaces';
 
+import { waitForService } from './utils';
+
 import logger from './logger';
 import config, { ApplicationConfig } from './config';
 
@@ -115,6 +117,15 @@ class Application {
   restart = (): void => {
     this.stop();
     this.run();
+  }
+
+  startAndWait = async () => {
+    if (!this.process) {
+      logger.error(`[${this.name}] is not running. Starting...`);
+      this.run();
+    }
+
+    await waitForService(this.port);
   }
 }
 

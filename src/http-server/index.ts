@@ -62,7 +62,11 @@ class HTTPServer {
 
       logger.debug(`[HTTP] ${app.name}: ${request.url}`);
 
-      this.createPipe(app, request, response);
+      app.startAndWait().then(() => {
+        this.createPipe(app, request, response);
+      }).catch((e) => {
+        this.showError(response, `Error on accessing application ${app.name}: ${e.message}`);
+      });
     } catch (e) {
       this.showError(response, e.message);
     }
