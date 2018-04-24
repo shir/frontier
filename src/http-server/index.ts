@@ -64,6 +64,7 @@ class HTTPServer {
 
       app.startAndWait().then(() => {
         this.createPipe(app, request, response);
+        app.killOnIdle();
       }).catch((e) => {
         this.showError(response, `Error on accessing application ${app.name}: ${e.message}`);
       });

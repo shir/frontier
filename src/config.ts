@@ -15,9 +15,10 @@ interface ApplicationConfig {
 }
 
 class Config {
-  public readonly dnsServerPort: number;
-  public readonly httpServerPort: number;
+  public readonly dnsServerPort:  number;
+  public readonly httpServerPort:  number;
   public readonly httpsServerPort: number;
+  public readonly idleTimeout:     number;
 
   public readonly configFilePath: string;
   public readonly logsDir: string;
@@ -29,6 +30,7 @@ class Config {
     this.dnsServerPort   = 23400;
     this.httpServerPort  = 23401;
     this.httpsServerPort = 23402;
+    this.idleTimeout     = 10 * 60 * 1000; // 10 minutes
 
     this.configFilePath      = path.join(os.homedir(), FRONTIER_DIR, 'config.json');
     this.logsDir             = path.join(os.homedir(), FRONTIER_DIR, 'logs');
