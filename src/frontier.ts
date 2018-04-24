@@ -19,7 +19,7 @@ class Frontier {
   start = () => {
     this.appManager.addApplications(config.applications);
 
-    this.appManager.runAll();
+    // this.appManager.runAll();
 
     this.httpServer.start();
     this.dnsServer.start();

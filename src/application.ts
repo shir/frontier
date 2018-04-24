@@ -1,7 +1,10 @@
 import * as path from 'path';
 import * as fs from 'fs';
+import * as timers from 'timers';
 import * as pty from 'node-pty';
 import { ITerminal } from 'node-pty/lib/interfaces';
+
+import { waitForService } from './utils';
 
 import logger from './logger';
 import config, { ApplicationConfig } from './config';
@@ -19,6 +22,7 @@ class Application {
   private process:   ITerminal | null = null;
   private logStream: fs.WriteStream | null = null;
   private watcher:   fs.FSWatcher | null = null;
+  private idleTimer: NodeJS.Timer | null = null;
 
   constructor(params: ApplicationConfig) {
     this.name      = params.name;
@@ -110,11 +114,41 @@ class Application {
       this.process.kill('SIGTERM');
       this.process = null;
     }
+    if (this.idleTimer) {
+      timers.clearTimeout(this.idleTimer);
+      this.idleTimer = null;
+    }
   }
 
   restart = (): void => {
     this.stop();
     this.run();
+  }
+
+  startAndWait = async () => {
+    if (!this.process) {
+      logger.info(`[${this.name}] is not running. Starting...`);
+      this.run();
+    }
+
+    await waitForService(this.port);
+  }
+
+  killOnIdle = () => {
+    if (this.idleTimer) {
+      timers.clearTimeout(this.idleTimer);
+      this.idleTimer = null;
+    }
+
+    this.idleTimer = timers.setTimeout(
+      () => {
+        logger.info(
+          `[${this.name}] Stopping after ${config.idleTimeout / (1000 * 60)}`
+          + ` minutes idle.`);
+        this.stop();
+      },
+      config.idleTimeout,
+    );
   }
 }
 
