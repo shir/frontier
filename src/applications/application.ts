@@ -4,10 +4,10 @@ import * as timers from 'timers';
 import * as pty from 'node-pty';
 import { ITerminal } from 'node-pty/lib/interfaces';
 
-import { waitForService } from './utils';
+import { waitForService } from '../utils';
 
-import logger from './logger';
-import config, { ApplicationConfig } from './config';
+import logger from '../logger';
+import config, { ApplicationConfig } from '../config';
 
 class Application {
   name:       string;

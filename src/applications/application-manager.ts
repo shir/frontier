@@ -1,5 +1,5 @@
 import Application from './application';
-import { ApplicationConfig } from './config';
+import { ApplicationConfig } from '../config';
 
 class ApplicationManager {
   readonly apps: Application[] = [];

@@ -3,8 +3,8 @@ import * as http from 'http';
 import config from '../config';
 import logger from '../logger';
 
-import ApplicationManager from '../application-manager';
-import Application from '../application';
+import ApplicationManager from '../applications/application-manager';
+import Application from '../applications/application';
 
 class HTTPServer {
   appManager: ApplicationManager;

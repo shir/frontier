@@ -1,4 +1,4 @@
-import ApplicationManager from './application-manager';
+import ApplicationManager from './applications/application-manager';
 
 import config from './config';
 
