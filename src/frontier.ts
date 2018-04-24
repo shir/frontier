@@ -1,7 +1,5 @@
 import ApplicationManager from './applications/application-manager';
 
-import config from './config';
-
 import HTTPServer from './http-server';
 import DNSServer  from './dns-server';
 
@@ -17,7 +15,7 @@ class Frontier {
   }
 
   start = () => {
-    this.appManager.addApplications(config.applications);
+    this.appManager.loadApplications();
 
     // this.appManager.runAll();
 

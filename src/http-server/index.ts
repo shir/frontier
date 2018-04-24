@@ -28,7 +28,7 @@ class HTTPServer {
   ): void => {
     const requestOptions = {
       host:    'localhost',
-      port:    app.port,
+      port:    app.config.port,
       path:    request.url,
       method:  request.method,
       headers: request.headers,
@@ -42,7 +42,7 @@ class HTTPServer {
     proxyRequest.on('error', (e) => {
       this.showError(
         response,
-        `Error on accessing "${app.name}" on port ${app.port}: ${e.message}`,
+        `Error on accessing "${app.name}" on port ${app.config.port}: ${e.message}`,
       );
     });
     request.pipe(proxyRequest);

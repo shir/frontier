@@ -1,10 +1,18 @@
+import * as fs from 'fs';
+
+import config from '../config';
 import Application from './application';
-import { ApplicationConfig } from '../config';
+import ApplicationConfig from './application-config';
 
 class ApplicationManager {
   readonly apps: Application[] = [];
 
-  addApplication = (appParams: ApplicationConfig | Application) => {
+  public loadApplications = () => {
+    JSON.parse(fs.readFileSync(config.configFilePath, 'utf8')).applications
+      .forEach((json: any) => this.addApplication(new ApplicationConfig(json)));
+  }
+
+  public addApplication = (appParams: ApplicationConfig | Application) => {
     let app = null;
     if (appParams instanceof Application) {
       app = appParams;
@@ -14,19 +22,15 @@ class ApplicationManager {
     this.apps.push(app);
   }
 
-  addApplications = (appsParams: ApplicationConfig[]) => {
-    appsParams.forEach(params => this.addApplication(params));
+  public appByHostname = (hostname: string) => {
+    return this.apps.find(a => a.config.hostname === hostname);
   }
 
-  appByHostname = (hostname: string) => {
-    return this.apps.find(a => a.hostname === hostname);
-  }
-
-  runAll = () => {
+  public runAll = () => {
     this.apps.forEach(a => a.run());
   }
 
-  stopAll = () => {
+  public stopAll = () => {
     this.apps.forEach(a => a.stop());
   }
 }
