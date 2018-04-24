@@ -13,6 +13,7 @@
     "lint": "tslint 'src/**/*.ts'"
   },
   "dependencies": {
+    "commander": "^2.15.1",
     "dns2": "^1.3.0",
     "node-pty": "^0.7.4",
     "winston": "^2.4.1"
