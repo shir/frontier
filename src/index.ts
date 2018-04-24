@@ -1,23 +1,32 @@
-import Commander from 'commander';
+import program from 'commander';
 
 import Frontier from './frontier';
+import Installer from './installer';
 
-Commander
-  .version('0.0.1')
-  .option('-i, --install', 'Install Frontier as service')
-  .parse(process.argv);
+program
+  .version('0.0.1');
 
-if (Commander.install) {
-  console.log('Install');
-} else {
-  const frontier = new Frontier();
+program
+  .command('install')
+  .description('Install Frontier as service')
+  .action(() => {
+    new Installer().perform();
+  });
 
-  try {
-    frontier.start();
+program
+  .command('start')
+  .description('Start Frontier')
+  .action(() => {
+    const frontier = new Frontier();
 
-    process.on('SIGINT', frontier.stop);
-  } catch (e) {
-    frontier.stop();
-    throw e;
-  }
-}
+    try {
+      frontier.start();
+
+      process.on('SIGINT', frontier.stop);
+    } catch (e) {
+      frontier.stop();
+      throw e;
+    }
+  });
+
+program.parse(process.argv);
