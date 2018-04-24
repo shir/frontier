@@ -18,6 +18,5 @@ with it. And looks like it's abandoned too.
   * Configure firewall to redirect everything on port 80 and 443 to
     Frontier
   * Configure resolver to use Frontier for '.test' domain
-* Move application configuration to application's root folder
 * Add many processes per application
 * Add Frontier configuration

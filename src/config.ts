@@ -9,8 +9,9 @@ class Config {
   public readonly httpsServerPort:    number;
   public readonly defaultIdleTimeout: number;
 
-  public readonly configFilePath: string;
-  public readonly logsDir: string;
+  public readonly appConfigFileName:   string;
+  public readonly mainDir:             string;
+  public readonly logsDir:             string;
   public readonly frontierLogFilePath: string;
 
   constructor() {
@@ -19,9 +20,10 @@ class Config {
     this.httpsServerPort    = 23402;
     this.defaultIdleTimeout = 10 * 60 * 1000;
 
-    this.configFilePath      = path.join(os.homedir(), FRONTIER_DIR, 'config.json');
-    this.logsDir             = path.join(os.homedir(), FRONTIER_DIR, 'logs');
-    this.frontierLogFilePath = path.join(this.logsDir, 'frontier.log');
+    this.appConfigFileName   = '.frontier.json';
+    this.mainDir             = path.join(os.homedir(),   FRONTIER_DIR);
+    this.logsDir             = path.join(this.mainDir, 'logs');
+    this.frontierLogFilePath = path.join(this.logsDir,   'frontier.log');
   }
 }
 

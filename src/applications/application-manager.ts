@@ -1,6 +1,9 @@
 import * as fs from 'fs';
+import * as path from 'path';
 
 import config from '../config';
+import logger from '../logger';
+
 import Application from './application';
 import ApplicationConfig from './application-config';
 
@@ -8,8 +11,24 @@ class ApplicationManager {
   readonly apps: Application[] = [];
 
   public loadApplications = () => {
-    JSON.parse(fs.readFileSync(config.configFilePath, 'utf8')).applications
-      .forEach((json: any) => this.addApplication(new ApplicationConfig(json)));
+    if (!fs.existsSync(config.mainDir)) {
+      logger.error(`"${config.mainDir} could not be found`);
+      return;
+    }
+
+    fs.readdirSync(config.mainDir).forEach((file) => {
+      const stats = fs.statSync(path.join(config.mainDir, file));
+      if (stats.isDirectory()) {
+        const configFilePath = path.join(config.mainDir, file, config.appConfigFileName);
+        if (fs.existsSync(configFilePath)) {
+          const jsonConfig = JSON.parse(fs.readFileSync(configFilePath, 'utf8'));
+          this.addApplication(new ApplicationConfig(jsonConfig));
+        } else {
+          logger.warn(
+            `File "${config.appConfigFileName}" not found for folder "${file}". Skipping`);
+        }
+      }
+    });
   }
 
   public addApplication = (appParams: ApplicationConfig | Application) => {
@@ -20,6 +39,7 @@ class ApplicationManager {
       app = new Application(appParams);
     }
     this.apps.push(app);
+    logger.info(`"${app.name}" added on port ${app.config.port}`);
   }
 
   public appByHostname = (hostname: string) => {
