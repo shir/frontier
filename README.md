@@ -45,7 +45,6 @@ $ ln -s ~/projects/my-favorite-project
 Create `.frontier.json` file in project folder with content:
 ```json
 {
-  "port":      5000,
   "command":   "rvm",
   "args":      ["in", "$DIR", "do", "bundle", "exec", "rails", "server", "-p", "$PORT"],
   "watchFile": "tmp/restart.txt"
