@@ -14,6 +14,12 @@ class Config {
   public readonly logsDir:             string;
   public readonly frontierLogFilePath: string;
 
+  public readonly resolverFilePath:   string;
+  public readonly pfAnchorName:       string;
+  public readonly pfAnchorFilePath:   string;
+  public readonly pfConfFilePath:     string;
+  public readonly pfLaunchDaemonPath: string;
+
   constructor() {
     this.dnsServerPort      = 23400;
     this.httpServerPort     = 23401;
@@ -24,6 +30,12 @@ class Config {
     this.mainDir             = path.join(os.homedir(),   FRONTIER_DIR);
     this.logsDir             = path.join(this.mainDir, 'logs');
     this.frontierLogFilePath = path.join(this.logsDir,   'frontier.log');
+
+    this.resolverFilePath   = '/etc/resolver/test';
+    this.pfAnchorName       = 'frontier';
+    this.pfAnchorFilePath   = `/etc/pf.anchors/${this.pfAnchorName}`;
+    this.pfConfFilePath     = `/etc/pf.${this.pfAnchorName}.conf`;
+    this.pfLaunchDaemonPath = '/Library/LaunchDaemons/me.shir.frontier.firewall.plist';
   }
 }
 
