@@ -16,8 +16,16 @@ program
 
 program
   .command('install-firewall')
-  .description('Install friewall rules for Frontier')
+  .description('Install firewall rules for Frontier')
   .action(() => {
+    new FirewallInstaller().perform();
+  });
+
+program
+  .command('install')
+  .description('Install resolver and firewall rules for Frontier')
+  .action(() => {
+    new ResolverInstaller().perform();
     new FirewallInstaller().perform();
   });
 
