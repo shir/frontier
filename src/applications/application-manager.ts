@@ -17,12 +17,13 @@ class ApplicationManager {
     }
 
     fs.readdirSync(config.mainDir).forEach((file) => {
-      const stats = fs.statSync(path.join(config.mainDir, file));
+      const appDir = path.join(config.mainDir, file);
+      const stats = fs.statSync(appDir);
       if (stats.isDirectory()) {
-        const configFilePath = path.join(config.mainDir, file, config.appConfigFileName);
+        const configFilePath = path.join(appDir, config.appConfigFileName);
         if (fs.existsSync(configFilePath)) {
           const jsonConfig = JSON.parse(fs.readFileSync(configFilePath, 'utf8'));
-          this.addApplication(new ApplicationConfig(jsonConfig));
+          this.addApplication(new ApplicationConfig(appDir, jsonConfig));
         } else {
           logger.warn(
             `File "${config.appConfigFileName}" not found for folder "${file}". Skipping`);

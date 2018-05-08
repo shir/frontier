@@ -13,11 +13,11 @@ class ApplicationConfig {
   public readonly watchFile?:   string;
   public readonly idleTimeout?: number;
 
-  constructor(jsonConfig: any) {
-    this.name        = jsonConfig.name;
-    this.hostname    = jsonConfig.hostname || `${jsonConfig.name}.test`;
+  constructor(directory: string, jsonConfig: any) {
+    this.name        = jsonConfig.name || path.basename(directory);
+    this.hostname    = jsonConfig.hostname || `${this.name}.test`;
     this.port        = jsonConfig.port;
-    this.directory   = jsonConfig.directory || './';
+    this.directory   = jsonConfig.directory || directory;
     this.command     = jsonConfig.command;
     this.args        = this.replaceEnvs(jsonConfig.args || []);
     this.logFile     = path.join(config.logsDir, `${this.name}.log`);
