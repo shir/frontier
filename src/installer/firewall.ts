@@ -25,8 +25,27 @@ class FirewallInstaller {
     );
   }
 
+  installPfConf = () => {
+    logger.info(`Write ${config.pfConfFilePath}`);
+    ejs.renderFile(
+      path.join(__dirname, '..', 'templates', 'pf.conf.ejs'),
+      {
+        anchor:         config.pfAnchorName,
+        anchorFilePath: config.pfAnchorFilePath,
+      },
+      (err, result) => {
+        if (err) {
+          logger.error(`Error on rendering PF config template: ${err.message}`);
+          return;
+        }
+        fs.writeFileSync(config.pfConfFilePath, result, { mode: '0644' });
+      },
+    );
+  }
+
   perform = () => {
     this.installPfAnchor();
+    this.installPfConf();
   }
 }
 

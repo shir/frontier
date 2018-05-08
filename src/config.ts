@@ -15,7 +15,9 @@ class Config {
   public readonly frontierLogFilePath: string;
 
   public readonly resolverFilePath: string;
+  public readonly pfAnchorName:     string;
   public readonly pfAnchorFilePath: string;
+  public readonly pfConfFilePath:   string;
 
   constructor() {
     this.dnsServerPort      = 23400;
@@ -29,7 +31,9 @@ class Config {
     this.frontierLogFilePath = path.join(this.logsDir,   'frontier.log');
 
     this.resolverFilePath = '/etc/resolver/test';
-    this.pfAnchorFilePath = '/etc/pf.anchors/frontier';
+    this.pfAnchorName     = 'frontier';
+    this.pfAnchorFilePath = `/etc/pf.anchors/${this.pfAnchorName}`;
+    this.pfConfFilePath   = `/etc/pf.${this.pfAnchorName}.conf`;
   }
 }
 
