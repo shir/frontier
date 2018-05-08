@@ -45,9 +45,6 @@ $ ln -s ~/projects/my-favorite-project
 Create `.frontier.json` file in project folder with content:
 ```json
 {
-  "name":      "my-favorite-project",
-  "port":      5000,
-  "directory": "~/projects/my-favorite-project",
   "command":   "rvm",
   "args":      ["in", "$DIR", "do", "bundle", "exec", "rails", "server", "-p", "$PORT"],
   "watchFile": "tmp/restart.txt"
@@ -56,6 +53,9 @@ Create `.frontier.json` file in project folder with content:
 
 # Run
 
+Start server:
 ```sh
 $ bin/frontier start
 ```
+
+Project will be available by address http://my-favorite-project.test

@@ -1,4 +1,5 @@
 import * as path from 'path';
+import * as fs from 'fs';
 
 import config from '../config';
 
@@ -13,11 +14,18 @@ class ApplicationConfig {
   public readonly watchFile?:   string;
   public readonly idleTimeout?: number;
 
-  constructor(jsonConfig: any) {
-    this.name        = jsonConfig.name;
-    this.hostname    = jsonConfig.hostname || `${jsonConfig.name}.test`;
-    this.port        = jsonConfig.port;
-    this.directory   = jsonConfig.directory || './';
+  constructor(appDir: string, port: number) {
+    const configFilePath = path.join(appDir, config.appConfigFileName);
+    if (!fs.existsSync(configFilePath)) {
+      throw new Error(`File "${config.appConfigFileName}" not found for folder "${appDir}"`);
+    }
+
+    const jsonConfig = JSON.parse(fs.readFileSync(configFilePath, 'utf8'));
+
+    this.name        = jsonConfig.name || path.basename(appDir);
+    this.hostname    = jsonConfig.hostname || `${this.name}.test`;
+    this.port        = jsonConfig.port || port;
+    this.directory   = jsonConfig.directory || fs.realpathSync(appDir);
     this.command     = jsonConfig.command;
     this.args        = this.replaceEnvs(jsonConfig.args || []);
     this.logFile     = path.join(config.logsDir, `${this.name}.log`);
