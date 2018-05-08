@@ -1,4 +1,7 @@
+import * as childProcess from 'child_process';
+
 import config from '../config';
+import logger from '../logger';
 
 import Base from './base';
 
@@ -33,10 +36,19 @@ class FirewallInstaller extends Base {
     );
   }
 
+  runLaunchDaemon = () => {
+    logger.info('Load firewall rules');
+    childProcess.spawnSync(
+      'launchctl',
+      ['load', config.pfLaunchDaemonPath],
+    );
+  }
+
   perform = () => {
     this.installPfAnchor();
     this.installPfConf();
     this.installLaunchDaemon();
+    this.runLaunchDaemon();
   }
 }
 
