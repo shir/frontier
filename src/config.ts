@@ -14,6 +14,8 @@ class Config {
   public readonly logsDir:             string;
   public readonly frontierLogFilePath: string;
 
+  public readonly resolverFilePath: string = '/etc/resolver/test';
+
   constructor() {
     this.dnsServerPort      = 23400;
     this.httpServerPort     = 23401;

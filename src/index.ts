@@ -1,16 +1,16 @@
 import program from 'commander';
 
 import Frontier from './frontier';
-import Installer from './installer';
+import ResolverInstaller from './installer/resolver';
 
 program
   .version('0.0.1');
 
 program
-  .command('install')
-  .description('Install Frontier as service')
+  .command('install-resolver')
+  .description('Install resolver part for Frontier')
   .action(() => {
-    new Installer().perform();
+    new ResolverInstaller().perform();
   });
 
 program
