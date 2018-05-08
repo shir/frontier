@@ -2,6 +2,7 @@ import program from 'commander';
 
 import Frontier from './frontier';
 import ResolverInstaller from './installer/resolver';
+import FirewallInstaller from './installer/firewall';
 
 program
   .version('0.0.1');
@@ -11,6 +12,13 @@ program
   .description('Install resolver part for Frontier')
   .action(() => {
     new ResolverInstaller().perform();
+  });
+
+program
+  .command('install-firewall')
+  .description('Install friewall rules for Frontier')
+  .action(() => {
+    new FirewallInstaller().perform();
   });
 
 program

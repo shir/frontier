@@ -8,6 +8,7 @@ import * as ejs from 'ejs';
 
 class ResolverInstaller {
   perform = () => {
+    logger.info(`Write ${config.resolverFilePath}`);
     ejs.renderFile(
       path.join(__dirname, '..', 'templates', 'resolver.ejs'),
       { port: config.dnsServerPort },
