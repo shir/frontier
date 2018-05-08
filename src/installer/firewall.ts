@@ -25,9 +25,18 @@ class FirewallInstaller extends Base {
     );
   }
 
+  installLaunchDaemon = () => {
+    this.renderTemplate(
+      'pf-launch-daemon',
+      config.pfLaunchDaemonPath,
+      { pfConfFile: config.pfConfFilePath },
+    );
+  }
+
   perform = () => {
     this.installPfAnchor();
     this.installPfConf();
+    this.installLaunchDaemon();
   }
 }
 
