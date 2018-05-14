@@ -10,7 +10,7 @@ class ApplicationConfig {
   public readonly directory:    string;
   public readonly command:      string;
   public readonly args:         string[];
-  public readonly logFile:      string;
+  public readonly logFile?:     string;
   public readonly watchFile?:   string;
   public readonly idleTimeout?: number;
 
@@ -28,7 +28,7 @@ class ApplicationConfig {
     this.directory   = jsonConfig.directory || fs.realpathSync(appDir);
     this.command     = jsonConfig.command;
     this.args        = this.replaceEnvs(jsonConfig.args || []);
-    this.logFile     = path.join(config.logsDir, `${this.name}.log`);
+    this.logFile     = jsonConfig.logFile;
     this.watchFile   = jsonConfig.watchFile && path.join(this.directory, jsonConfig.watchFile);
 
     if (jsonConfig.idleTimeout === 0) {

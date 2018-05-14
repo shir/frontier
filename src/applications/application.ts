@@ -25,11 +25,11 @@ class Application {
   get shouldRestart() { return this.watchFileChanged; }
 
   private logOutput = (appProcess: ITerminal): void => {
+    if (!this.config.logFile) { return; }
+
     this.logStream = fs.createWriteStream(this.config.logFile, { flags: 'a' });
 
     appProcess.on('data', (data) => {
-      process.stdout.write(data);
-
       if (this.logStream) {
         this.logStream.write(data);
       }
@@ -101,12 +101,17 @@ class Application {
   }
 
   public startAndWait = async () => {
+    let isStarting = false;
     if (!this.process) {
       logger.info(`[${this.name}] is not running. Starting...`);
       this.run();
+      isStarting = true;
     }
 
     await waitForService(this.config.port);
+    if (isStarting) {
+      logger.info(`[${this.name}] started.`);
+    }
   }
 
   public killOnIdle = () => {
