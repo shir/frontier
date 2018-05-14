@@ -11,7 +11,6 @@ class Config {
 
   public readonly appConfigFileName:   string;
   public readonly mainDir:             string;
-  public readonly logsDir:             string;
   public readonly frontierLogFilePath: string;
 
   public readonly resolverFilePath:   string;
@@ -28,8 +27,7 @@ class Config {
 
     this.appConfigFileName   = '.frontier.json';
     this.mainDir             = path.join(os.homedir(),   FRONTIER_DIR);
-    this.logsDir             = path.join(this.mainDir, 'logs');
-    this.frontierLogFilePath = path.join(this.logsDir,   'frontier.log');
+    this.frontierLogFilePath = path.join(this.mainDir, 'frontier.log');
 
     this.resolverFilePath   = '/etc/resolver/test';
     this.pfAnchorName       = 'frontier';

@@ -4,7 +4,7 @@ import * as net from 'net';
 import * as timers from 'timers';
 
 function ensureDirExists(dir: string) {
-  dir.split(path.sep).reduce(
+  path.normalize(dir).split(path.sep).reduce(
     (parentDir, childDir) => {
       const curDir = path.resolve(parentDir, childDir);
 
