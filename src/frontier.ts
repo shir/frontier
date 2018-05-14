@@ -14,16 +14,14 @@ class Frontier {
     this.httpServer = new HTTPServer(this.appManager);
   }
 
-  start = () => {
+  public start = () => {
     this.appManager.loadApplications();
-
-    // this.appManager.runAll();
 
     this.httpServer.start();
     this.dnsServer.start();
   }
 
-  stop = () => {
+  public stop = () => {
     this.dnsServer.stop();
     this.httpServer.stop();
     this.appManager.stopAll();
