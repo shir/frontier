@@ -15,12 +15,14 @@ class Application {
   private logStream: fs.WriteStream | null = null;
   private watcher:   fs.FSWatcher | null = null;
   private idleTimer: NodeJS.Timer | null = null;
+  private watchFileChanged: boolean = false;
 
   constructor(config: AppConfig) {
     this.config = config;
   }
 
-  get name() { return this.config.name; }
+  get name()          { return this.config.name; }
+  get shouldRestart() { return this.watchFileChanged; }
 
   private logOutput = (appProcess: ITerminal): void => {
     this.logStream = fs.createWriteStream(this.config.logFile, { flags: 'a' });
@@ -37,11 +39,15 @@ class Application {
   private watch = () => {
     if (!this.config.watchFile) { return; }
 
+    this.watchFileChanged = false;
     logger.info(`[${this.name}] watching file ${this.config.watchFile}`);
-    this.watcher = fs.watch(this.config.watchFile, () => this.restart());
+    this.watcher = fs.watch(this.config.watchFile, () => {
+      logger.debug(`[${this.name}] watching file changed. Restart planned.`);
+      this.watchFileChanged = true;
+    });
   }
 
-  run = (): void => {
+  public run = (): void => {
     logger.info(`[${this.name}] run '${this.config.command} ${this.config.args.join(' ')}' `
       + `in directory '${this.config.directory}' `
       + `using $PORT=${this.config.port}`);
@@ -74,7 +80,7 @@ class Application {
     });
   }
 
-  stop = (): void => {
+  public stop = (): void => {
     logger.info(`[${this.name}] stop`);
     if (this.watcher) {
       this.watcher.close();
@@ -94,12 +100,7 @@ class Application {
     }
   }
 
-  restart = (): void => {
-    this.stop();
-    this.run();
-  }
-
-  startAndWait = async () => {
+  public startAndWait = async () => {
     if (!this.process) {
       logger.info(`[${this.name}] is not running. Starting...`);
       this.run();
@@ -108,7 +109,7 @@ class Application {
     await waitForService(this.config.port);
   }
 
-  killOnIdle = () => {
+  public killOnIdle = () => {
     if (!this.config.idleTimeout) { return; }
 
     if (this.idleTimer) {

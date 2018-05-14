@@ -35,8 +35,6 @@ class HTTPServer {
     };
     const proxyRequest = http.request(requestOptions, (proxyResponse) => {
       proxyResponse.pipe(response);
-      proxyResponse.on('data', () => {
-      });
       response.writeHead(Number(proxyResponse.statusCode), proxyResponse.headers);
     });
     proxyRequest.on('error', (e) => {
@@ -62,6 +60,9 @@ class HTTPServer {
 
       logger.debug(`[HTTP] ${app.name}: ${request.url}`);
 
+      if (app.shouldRestart) {
+        app.stop();
+      }
       app.startAndWait().then(() => {
         this.createPipe(app, request, response);
         app.killOnIdle();
