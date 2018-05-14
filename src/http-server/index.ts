@@ -60,6 +60,9 @@ class HTTPServer {
 
       logger.debug(`[HTTP] ${app.name}: ${request.url}`);
 
+      if (app.shouldRestart) {
+        app.stop();
+      }
       app.startAndWait().then(() => {
         this.createPipe(app, request, response);
         app.killOnIdle();
