@@ -1,9 +1,9 @@
 import * as fs from 'fs';
 import * as timers from 'timers';
-import * as pty from 'node-pty';
-import { ITerminal } from 'node-pty/lib/interfaces';
+import * as path from 'path';
+import * as child_process from 'child_process';
 
-import { waitForService } from '../utils';
+import { waitForService, ensureDirExists } from '../utils';
 
 import logger from '../logger';
 import AppConfig from './application-config';
@@ -11,7 +11,7 @@ import AppConfig from './application-config';
 class Application {
   readonly config: AppConfig;
 
-  private process:   ITerminal | null = null;
+  private process:   child_process.ChildProcess | null = null;
   private logStream: fs.WriteStream | null = null;
   private watcher:   fs.FSWatcher | null = null;
   private idleTimer: NodeJS.Timer | null = null;
@@ -24,16 +24,13 @@ class Application {
   get name()          { return this.config.name; }
   get shouldRestart() { return this.watchFileChanged; }
 
-  private logOutput = (appProcess: ITerminal): void => {
+  private logOutput = (appProcess: child_process.ChildProcess): void => {
     if (!this.config.logFile) { return; }
 
+    ensureDirExists(path.dirname(this.config.logFile));
     this.logStream = fs.createWriteStream(this.config.logFile, { flags: 'a' });
 
-    appProcess.on('data', (data) => {
-      if (this.logStream) {
-        this.logStream.write(data);
-      }
-    });
+    appProcess.stdout.pipe(this.logStream);
   }
 
   private watch = () => {
@@ -52,15 +49,11 @@ class Application {
       + `in directory '${this.config.directory}' `
       + `using $PORT=${this.config.port}`);
 
-    // I use `node-pty.spawn` instean `ChildProcess.spawn` because
-    // when used `ChildProcess.spawn` with piped stdout `fully-buffered` is work
-    // but using pty allows to keep `line-buffered`
-    // See https://eklitzke.org/stdout-buffering for explanation.
-    this.process = pty.spawn(this.config.command, this.config.args, {
-      cwd:  this.config.directory,
-      cols: process.stdout.columns,
-      rows: process.stdout.rows,
-      env:  {
+    this.process = child_process.spawn(this.config.command, this.config.args, {
+      shell: true,
+      stdio: 'pipe',
+      cwd:   this.config.directory,
+      env:   {
         ...process.env,
         PORT: String(this.config.port),
         DIR:  this.config.directory,
@@ -91,7 +84,7 @@ class Application {
       this.logStream = null;
     }
     if (this.process) {
-      this.process.kill('SIGTERM');
+      this.process.kill();
       this.process = null;
     }
     if (this.idleTimer) {
