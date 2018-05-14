@@ -35,8 +35,6 @@ class HTTPServer {
     };
     const proxyRequest = http.request(requestOptions, (proxyResponse) => {
       proxyResponse.pipe(response);
-      proxyResponse.on('data', () => {
-      });
       response.writeHead(Number(proxyResponse.statusCode), proxyResponse.headers);
     });
     proxyRequest.on('error', (e) => {
