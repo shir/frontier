@@ -28,8 +28,8 @@ class ApplicationConfig {
     this.directory   = jsonConfig.directory || fs.realpathSync(appDir);
     this.command     = jsonConfig.command;
     this.args        = this.replaceEnvs(jsonConfig.args || []);
-    this.logFile     = jsonConfig.logFile;
-    this.watchFile   = jsonConfig.watchFile && path.join(this.directory, jsonConfig.watchFile);
+    this.logFile     = jsonConfig.logFile && this.makePathAbsolute(jsonConfig.logFile);
+    this.watchFile   = jsonConfig.watchFile && this.makePathAbsolute(jsonConfig.watchFile);
 
     if (jsonConfig.idleTimeout === 0) {
       this.idleTimeout = undefined;
@@ -51,6 +51,12 @@ class ApplicationConfig {
           return arg;
       }
     });
+  }
+
+  private makePathAbsolute = (p: string): string => {
+    if (path.isAbsolute(p)) { return p; }
+
+    return path.join(this.directory, p);
   }
 }
 

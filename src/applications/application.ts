@@ -1,8 +1,9 @@
 import * as fs from 'fs';
 import * as timers from 'timers';
+import * as path from 'path';
 import * as child_process from 'child_process';
 
-import { waitForService } from '../utils';
+import { waitForService, ensureDirExists } from '../utils';
 
 import logger from '../logger';
 import AppConfig from './application-config';
@@ -26,6 +27,7 @@ class Application {
   private logOutput = (appProcess: child_process.ChildProcess): void => {
     if (!this.config.logFile) { return; }
 
+    ensureDirExists(path.dirname(this.config.logFile));
     this.logStream = fs.createWriteStream(this.config.logFile, { flags: 'a' });
 
     appProcess.stdout.pipe(this.logStream);
