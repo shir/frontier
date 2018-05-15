@@ -31,6 +31,7 @@ class Application {
     this.logStream = fs.createWriteStream(this.config.logFile, { flags: 'a' });
 
     appProcess.stdout.pipe(this.logStream);
+    appProcess.stderr.pipe(this.logStream);
   }
 
   private watch = () => {
@@ -55,6 +56,7 @@ class Application {
       cwd:   this.config.directory,
       env:   {
         ...process.env,
+        ...this.config.env,
         PORT: String(this.config.port),
         DIR:  this.config.directory,
       },
@@ -103,7 +105,7 @@ class Application {
 
     await waitForService(this.config.port);
     if (isStarting) {
-      logger.info(`[${this.name}] started.`);
+      logger.info(`[${this.name}] started. pid: ${this.process && this.process.pid}`);
     }
   }
 
