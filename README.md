@@ -42,14 +42,44 @@ $ cd ~/.frontier
 $ ln -s ~/projects/my-favorite-project
 ```
 
-Create `.frontier.json` file in project folder with content:
+Create `.frontier.json` file in project folder
+
+## Rails with RVM
+
 ```json
 {
   "command":   "rvm",
-  "args":      ["in", "$DIR", "do", "bundle", "exec", "rails", "server", "-p", "$PORT"],
+  "args":      ["in", "$DIR", "do", "bundle", "exec", "rails", "server", "-p", "$PORT", "-b", "127.0.0.1"],
   "watchFile": "tmp/restart.txt"
 }
 ```
+
+## Node.js
+
+```json
+{
+  "command":   "npm",
+  "args":      ["run", "start"],
+  "watchFile": "tmp/restart.txt"
+}
+```
+
+## Create React App
+
+```json
+{
+  "command":   "yarn",
+  "args":      ["run", "start"],
+  "watchFile": "tmp/restart.txt"
+}
+```
+
+In project in `.env` file set:
+```
+BROWSER=none
+HOST=my-favorite-project.test
+```
+
 
 # Run
 
