@@ -30,8 +30,10 @@ class Application {
     ensureDirExists(path.dirname(this.config.logFile));
     this.logStream = fs.createWriteStream(this.config.logFile, { flags: 'a' });
 
-    appProcess.stdout.pipe(this.logStream);
-    appProcess.stderr.pipe(this.logStream);
+    appProcess.stdout.on('data', d => this.logStream && this.logStream.write(d));
+    appProcess.stderr.on('data', d => this.logStream && this.logStream.write(d));
+    // appProcess.stdout.pipe(this.logStream);
+    // appProcess.stderr.pipe(this.logStream);
   }
 
   private watch = () => {
@@ -52,7 +54,11 @@ class Application {
 
     this.process = child_process.spawn(this.config.command, this.config.args, {
       shell: true,
-      stdio: 'pipe',
+      stdio: [
+        'ignore',
+        this.config.logFile ? 'pipe' : 'ignore',
+        this.config.logFile ? 'pipe' : 'ignore',
+      ],
       cwd:   this.config.directory,
       env:   {
         ...process.env,
@@ -77,6 +83,10 @@ class Application {
 
   public stop = (): void => {
     logger.info(`[${this.name}] stop`);
+    if (this.process) {
+      this.process.kill();
+      this.process = null;
+    }
     if (this.watcher) {
       this.watcher.close();
       this.watcher = null;
@@ -84,10 +94,6 @@ class Application {
     if (this.logStream) {
       this.logStream.end();
       this.logStream = null;
-    }
-    if (this.process) {
-      this.process.kill();
-      this.process = null;
     }
     if (this.idleTimer) {
       timers.clearTimeout(this.idleTimer);
