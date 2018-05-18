@@ -1,4 +1,5 @@
 import * as http from 'http';
+import stoppable from 'stoppable';
 
 import config from '../config';
 import logger from '../logger';
@@ -35,6 +36,7 @@ class HTTPServer {
     };
     const proxyRequest = http.request(requestOptions, (proxyResponse) => {
       proxyResponse.pipe(response);
+      proxyResponse.on('data', () => {});
       response.writeHead(Number(proxyResponse.statusCode), proxyResponse.headers);
     });
     proxyRequest.on('error', (e) => {
@@ -85,7 +87,7 @@ class HTTPServer {
   start = (): void => {
     if (this.server) { this.stop(); }
 
-    this.server = http.createServer();
+    this.server = stoppable(http.createServer());
 
     this.server.on('request', this.handleRequest);
     this.server.on('close',   this.handleClose);
@@ -99,7 +101,8 @@ class HTTPServer {
   stop = (): void => {
     if (!this.server) { return; }
 
-    this.server.close();
+    // @ts-ignore TS2339 stop() method is added in "stoppable" by type is not redefined
+    this.server.stop();
     this.server =  null;
   }
 }

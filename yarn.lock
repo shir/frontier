@@ -26,6 +26,12 @@
   version "9.6.1"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-9.6.1.tgz#e2d374ef15b315b48e7efc308fa1a7cd51faa06c"
 
+"@types/stoppable@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@types/stoppable/-/stoppable-1.0.0.tgz#0157b53a2a8fd7ed6b9d4f726b627c88ab4b4e5f"
+  dependencies:
+    "@types/node" "*"
+
 "@types/winston@^2.3.8":
   version "2.3.8"
   resolved "https://registry.yarnpkg.com/@types/winston/-/winston-2.3.8.tgz#88964f45ecb5ed1feb4bfb38a24316bee8bf8768"
@@ -513,6 +519,10 @@ sprintf-js@~1.0.2:
 stack-trace@0.0.x:
   version "0.0.10"
   resolved "https://registry.yarnpkg.com/stack-trace/-/stack-trace-0.0.10.tgz#547c70b347e8d32b4e108ea1a2a159e5fdde19c0"
+
+stoppable@^1.0.6:
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/stoppable/-/stoppable-1.0.6.tgz#21f7f933f884f64947c5ad3eb6dd7413cb4531ca"
 
 string-width@^1.0.1:
   version "1.0.2"
