@@ -79,7 +79,27 @@ In project in `.env` file set:
 BROWSER=none
 HOST=my-favorite-project.test
 ```
+## All available options:
 
+- `command` - (required) command to run
+- `args` - (required) arguments passed to the `command`.
+  - `$PORT` will be replaced with the `port`.
+  - `$DIR` will be replaced with the `directory`.
+- `hostname` - (optional) a hostname by which you want to access the application.
+  by default is the symlink name.
+- `port` - (optional) a port on which the application will listen. By default
+  auto assigned from the interval 5000-6000.
+- `directory` - (optional) a directory in which the `command` will be run.
+  By default is the directory to which the symlink is created.
+- env - (optional) hash of additional environment variables. All current
+  environment variables will be also available. Also $PORT and $DIR will be set.
+- `watchFile` - (optional) touch this file and the application will be
+  restarted on a next request. Relative to the `directory`.
+- `logFile` - all `stdout` and `stderr` output will be redirect to this file.
+  Relative to the `directory`.
+- idleTimeout - (optional) number of seconds after which the application will be
+  stopped after last request. By default - `10`. If you want not to stop server
+  set it to `0`.
 
 # Run
 
@@ -88,4 +108,4 @@ Start server:
 $ bin/frontier start
 ```
 
-Project will be available by address http://my-favorite-project.test
+The application will be available by address http://my-favorite-project.test
