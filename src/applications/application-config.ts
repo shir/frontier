@@ -9,6 +9,7 @@ class ApplicationConfig {
   public readonly port:         number;
   public readonly directory:    string;
   public readonly command:      string;
+  public readonly env:          { string: string };
   public readonly args:         string[];
   public readonly logFile?:     string;
   public readonly watchFile?:   string;
@@ -27,6 +28,7 @@ class ApplicationConfig {
     this.port        = jsonConfig.port || port;
     this.directory   = jsonConfig.directory || fs.realpathSync(appDir);
     this.command     = jsonConfig.command;
+    this.env         = jsonConfig.env || {};
     this.args        = this.replaceEnvs(jsonConfig.args || []);
     this.logFile     = jsonConfig.logFile && this.makePathAbsolute(jsonConfig.logFile);
     this.watchFile   = jsonConfig.watchFile && this.makePathAbsolute(jsonConfig.watchFile);
