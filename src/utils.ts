@@ -53,28 +53,37 @@ function waitForService(
 
     let intervalObj: NodeJS.Timer | null = null;
 
-    const handleExit = () => {
+    const clear = () => {
       if (intervalObj) {
         timers.clearInterval(intervalObj);
         intervalObj = null;
       }
-      reject(new Error('Process exit while waiting for start'));
+      if (process) {
+        process.removeListener('exit',  handleError);
+        process.removeListener('error', handleError);
+      }
     };
 
-    process.once('exit', handleExit);
-    process.once('error', handleExit);
+    const handleError = (e: Error) => {
+      clear();
+      reject(e instanceof Error ? e : new Error('Process exit while waiting for start'));
+    };
+
+    const handleSuccess = () => {
+      clear();
+      resolve();
+    };
+
+    process.once('exit',  handleError);
+    process.once('error', handleError);
 
     intervalObj = timers.setInterval(
       () => {
         isServiceAvailable(port).then((isAvailable) => {
           if (!isAvailable) { return; }
 
-          if (intervalObj) {
-            timers.clearInterval(intervalObj);
-            intervalObj = null;
-          }
-          resolve();
-        }).catch(reject);
+          handleSuccess();
+        }).catch(handleError);
       },
       interval,
     );
