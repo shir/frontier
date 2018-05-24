@@ -6,6 +6,9 @@
   "author": "Ildar Shaynurov",
   "license": "MIT",
   "private": true,
+  "engines": {
+    "node": ">=8.11.2"
+  },
   "scripts": {
     "templates": "copyfiles templates/*.ejs build/dist/",
     "build": "tsc",
