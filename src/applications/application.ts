@@ -48,6 +48,8 @@ class Application {
   }
 
   public run = (): void => {
+    if (!this.config.command) { return; }
+
     logger.info(`[${this.name}] run '${this.config.command} ${this.config.args.join(' ')}' `
       + `in directory '${this.config.directory}' `
       + `using $PORT=${this.config.port}`);
@@ -104,6 +106,10 @@ class Application {
 
   public startAndWait = async () => {
     let isStarting = false;
+    if (!this.config.command) {
+      logger.info(`[${this.name}] have no command. Just proxy.`);
+      return;
+    }
     if (!this.process) {
       logger.info(`[${this.name}] is not running. Starting...`);
       this.run();
