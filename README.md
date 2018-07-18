@@ -64,25 +64,12 @@ Create `.frontier.json` file in project folder
 }
 ```
 
-## Create React App
-
-```json
-{
-  "command":   "yarn",
-  "args":      ["run", "start"],
-  "watchFile": "tmp/restart.txt"
-}
-```
-
-In project in `.env` file set:
-```
-BROWSER=none
-HOST=my-favorite-project.test
-```
 ## All available options:
 
-- `command` - (required) command to run
-- `args` - (required) arguments passed to the `command`.
+- `command` - command to run. If not set then you have to start
+  application manually. Frontier will work just as usual proxy. In this case
+  you have to pass `port` option.
+- `args` - arguments passed to the `command`.
   - `$PORT` will be replaced with the `port`.
   - `$DIR` will be replaced with the `directory`.
 - `hostname` - (optional) a hostname by which you want to access the application.

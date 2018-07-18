@@ -8,9 +8,9 @@ class ApplicationConfig {
   public readonly hostname:     string;
   public readonly port:         number;
   public readonly directory:    string;
-  public readonly command:      string;
+  public readonly command?:     string;
+  public readonly args:          string[];
   public readonly env:          { string: string };
-  public readonly args:         string[];
   public readonly logFile?:     string;
   public readonly watchFile?:   string;
   public readonly idleTimeout?: number;
@@ -29,7 +29,7 @@ class ApplicationConfig {
     this.directory   = jsonConfig.directory || fs.realpathSync(appDir);
     this.command     = jsonConfig.command;
     this.env         = jsonConfig.env || {};
-    this.args        = this.replaceEnvs(jsonConfig.args || []);
+    this.args        = this.replaceEnvs(jsonConfig.args);
     this.logFile     = jsonConfig.logFile && this.makePathAbsolute(jsonConfig.logFile);
     this.watchFile   = jsonConfig.watchFile && this.makePathAbsolute(jsonConfig.watchFile);
 
@@ -42,7 +42,9 @@ class ApplicationConfig {
     }
   }
 
-  private replaceEnvs = (args: string[]): string[] => {
+  private replaceEnvs = (args?: string[]): string[] => {
+    if (!args) { return []; }
+
     return args.map((arg:string) => {
       switch (arg) {
         case '$PORT':

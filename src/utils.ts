@@ -2,6 +2,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 import * as net from 'net';
 import * as timers from 'timers';
+import * as childProcess from 'child_process';
 
 function ensureDirExists(dir: string) {
   path.normalize(dir).split(path.sep).reduce(
@@ -39,16 +40,50 @@ function isServiceAvailable(port: number): Promise<boolean> {
   });
 }
 
-function waitForService(port: number, interval: number = 1000): Promise<void> {
+function waitForService(
+  process: childProcess.ChildProcess | null,
+  port: number,
+  interval: number = 1000,
+): Promise<void> {
   return new Promise((resolve, reject) => {
-    const intervalObj = timers.setInterval(
+    if (!process) {
+      reject();
+      return;
+    }
+
+    let intervalObj: NodeJS.Timer | null = null;
+
+    const clear = () => {
+      if (intervalObj) {
+        timers.clearInterval(intervalObj);
+        intervalObj = null;
+      }
+      if (process) {
+        process.removeListener('exit',  handleError);
+        process.removeListener('error', handleError);
+      }
+    };
+
+    const handleError = (e: Error) => {
+      clear();
+      reject(e instanceof Error ? e : new Error('Process exit while waiting for start'));
+    };
+
+    const handleSuccess = () => {
+      clear();
+      resolve();
+    };
+
+    process.once('exit',  handleError);
+    process.once('error', handleError);
+
+    intervalObj = timers.setInterval(
       () => {
         isServiceAvailable(port).then((isAvailable) => {
           if (!isAvailable) { return; }
 
-          timers.clearInterval(intervalObj);
-          resolve();
-        }).catch(reject);
+          handleSuccess();
+        }).catch(handleError);
       },
       interval,
     );

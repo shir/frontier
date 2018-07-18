@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as timers from 'timers';
 import * as path from 'path';
-import * as child_process from 'child_process';
+import * as childProcess from 'child_process';
 
 import { waitForService, ensureDirExists } from '../utils';
 
@@ -11,7 +11,7 @@ import AppConfig from './application-config';
 class Application {
   readonly config: AppConfig;
 
-  private process:   child_process.ChildProcess | null = null;
+  private process:   childProcess.ChildProcess | null = null;
   private logStream: fs.WriteStream | null = null;
   private watcher:   fs.FSWatcher | null = null;
   private idleTimer: NodeJS.Timer | null = null;
@@ -24,7 +24,7 @@ class Application {
   get name()          { return this.config.name; }
   get shouldRestart() { return this.watchFileChanged; }
 
-  private logOutput = (appProcess: child_process.ChildProcess): void => {
+  private logOutput = (appProcess: childProcess.ChildProcess): void => {
     if (!this.config.logFile) { return; }
 
     ensureDirExists(path.dirname(this.config.logFile));
@@ -48,11 +48,13 @@ class Application {
   }
 
   public run = (): void => {
+    if (!this.config.command) { return; }
+
     logger.info(`[${this.name}] run '${this.config.command} ${this.config.args.join(' ')}' `
       + `in directory '${this.config.directory}' `
       + `using $PORT=${this.config.port}`);
 
-    this.process = child_process.spawn(this.config.command, this.config.args, {
+    this.process = childProcess.spawn(this.config.command, this.config.args, {
       shell: true,
       stdio: [
         'ignore',
@@ -71,13 +73,14 @@ class Application {
     this.logOutput(this.process);
     this.watch();
 
-    this.process.on('exit', (code) => {
+    this.process.once('exit', (code) => {
       logger.info(`[${this.name}] child process exit with code: ${code}`);
       this.process = null;
+      this.stop();
     });
-    this.process.on('error', (e) => {
+    this.process.once('error', (e) => {
       logger.error(`[${this.name}] child process error: `, e.message);
-      this.process = null;
+      this.stop();
     });
   }
 
@@ -103,13 +106,17 @@ class Application {
 
   public startAndWait = async () => {
     let isStarting = false;
+    if (!this.config.command) {
+      logger.info(`[${this.name}] have no command. Just proxy.`);
+      return;
+    }
     if (!this.process) {
       logger.info(`[${this.name}] is not running. Starting...`);
       this.run();
       isStarting = true;
     }
 
-    await waitForService(this.config.port);
+    await waitForService(this.process, this.config.port);
     if (isStarting) {
       logger.info(`[${this.name}] started. pid: ${this.process && this.process.pid}`);
     }
