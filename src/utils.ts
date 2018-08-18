@@ -77,16 +77,21 @@ function waitForService(
     process.once('exit',  handleError);
     process.once('error', handleError);
 
-    intervalObj = timers.setInterval(
-      () => {
-        isServiceAvailable(port).then((isAvailable) => {
-          if (!isAvailable) { return; }
+    const checkServiceIsAvailable = () => {
+      isServiceAvailable(port).then((isAvailable) => {
+        if (!isAvailable) {
+          setTimeout(
+            checkServiceIsAvailable,
+            interval,
+          );
+          return;
+        }
 
-          handleSuccess();
-        }).catch(handleError);
-      },
-      interval,
-    );
+        handleSuccess();
+      }).catch(handleError);
+    };
+
+    checkServiceIsAvailable();
   });
 }
 
