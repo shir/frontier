@@ -104,7 +104,9 @@ class HTTPServer {
     response: http.ServerResponse,
   ): void => {
     logger.error(`[PROXY] error: ${e}`);
-    this.showError(response, e.message, 500);
+    if (response) {
+      this.showError(response, e.message, 500);
+    }
   }
 
   private handleSocketUpgrade = (request: http.IncomingMessage, socket: any, head: any) => {
