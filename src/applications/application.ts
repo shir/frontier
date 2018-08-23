@@ -67,6 +67,7 @@ class Application {
         ...this.config.env,
         PORT: String(this.config.port),
         DIR:  this.config.directory,
+        HOST: this.config.hostname,
       },
     });
 

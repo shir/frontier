@@ -51,6 +51,8 @@ class ApplicationConfig {
           return String(this.port);
         case '$DIR':
           return String(this.directory);
+        case '$HOST':
+          return String(this.hostname);
         default:
           return arg;
       }
