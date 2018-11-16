@@ -23,32 +23,6 @@ class HTTPServer {
     response.end();
   }
 
-  // private createPipe = (
-  //   app: Application,
-  //   request: http.IncomingMessage,
-  //   response: http.ServerResponse,
-  // ): void => {
-  //   const requestOptions = {
-  //     host:    'localhost',
-  //     port:    app.config.port,
-  //     path:    request.url,
-  //     method:  request.method,
-  //     headers: request.headers,
-  //   };
-  //   const proxyRequest = http.request(requestOptions, (proxyResponse) => {
-  //     proxyResponse.pipe(response);
-  //     proxyResponse.on('data', () => {});
-  //     response.writeHead(Number(proxyResponse.statusCode), proxyResponse.headers);
-  //   });
-  //   proxyRequest.on('error', (e) => {
-  //     this.showError(
-  //       response,
-  //       `Error on accessing "${app.name}" on port ${app.config.port}: ${e.message}`,
-  //     );
-  //   });
-  //   request.pipe(proxyRequest);
-  // }
-
   private applicationForRequest = (request: http.IncomingMessage): Application => {
     if (!request.headers.host) {
       throw new Error(`No host in request!`);
@@ -79,8 +53,8 @@ class HTTPServer {
             hostname: 'localhost',
             port:     String(app.config.port),
           },
+          ws: true,
         });
-        // this.createPipe(app, request, response);
         app.killOnIdle();
       }).catch((e) => {
         this.showError(response, `Error on accessing application ${app.name}: ${e.message}`);
@@ -109,22 +83,6 @@ class HTTPServer {
     }
   }
 
-  private handleSocketUpgrade = (request: http.IncomingMessage, socket: any, head: any) => {
-    if (!this.proxy) { return; }
-
-    const app = this.applicationForRequest(request);
-
-    logger.debug(`[WS] ${app.name}: ${request.method} ${request.url}`);
-
-    this.proxy.ws(request, socket, head, {
-      target: {
-        protocol: 'http',
-        hostname: '127.0.0.1',
-        port:     String(app.config.port),
-      },
-    });
-  }
-
   start = (): void => {
     if (this.server) { this.stop(); }
 
@@ -136,7 +94,6 @@ class HTTPServer {
     this.server.on('request', this.handleRequest);
     this.server.on('close',   this.handleClose);
     this.server.on('error',   this.handleError);
-    this.server.on('upgrade', this.handleSocketUpgrade);
 
     this.server.listen(config.httpServerPort, () => {
       logger.info(`[HTTP] server listen on port ${config.httpServerPort}`);
