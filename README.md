@@ -34,6 +34,27 @@ Install resolver and firewall rules
 $ sudo bin/frontier install
 ```
 
+# Generate certificate for HTTPS
+
+If you want to use HTTPS and don't have warning in browsers about invalid
+certificate you have to generate and install self signed certificate.
+
+To generate certificate run command:
+```sh
+$ bin/frontier gencert
+```
+This command will generate certificate files in `~/.frontier` folder.
+Run:
+```sh
+$ open ~/.frontier/frontier.crt
+```
+to open generated certificate in Keychain application. Certificate with
+name "Frontier" will appear in "Certificates" category.
+Double click on it and in appeared window expand "Trust" and change
+"Secure Socket Layer (SSL)" option to "Always Trust". Now close certificate
+window. You will be asked for your password to make changes. After you confirm
+changes certificate will be valid in all browsers.
+
 # Configure
 
 Link your development application in `~/.frontier/` folder. For example:
@@ -107,4 +128,4 @@ Start server:
 $ bin/frontier start
 ```
 
-The application will be available by address http://my-favorite-project.test
+The application will be available by address http://my-favorite-project.dev.test

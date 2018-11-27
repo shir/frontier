@@ -4,6 +4,8 @@ import * as path from 'path';
 const FRONTIER_DIR = '.frontier';
 
 class Config {
+  public readonly domain: string;
+
   public readonly dnsServerPort:      number;
   public readonly httpServerPort:     number;
   public readonly httpsServerPort:    number;
@@ -13,6 +15,10 @@ class Config {
   public readonly mainDir:             string;
   public readonly frontierLogFilePath: string;
 
+  public readonly keyFilePath:  string;
+  public readonly certFilePath: string;
+  public readonly pfxFilePath:  string
+
   public readonly resolverFilePath:   string;
   public readonly pfAnchorName:       string;
   public readonly pfAnchorFilePath:   string;
@@ -20,6 +26,8 @@ class Config {
   public readonly pfLaunchDaemonPath: string;
 
   constructor() {
+    this.domain = 'dev.test'
+
     this.dnsServerPort      = 23400;
     this.httpServerPort     = 23401;
     this.httpsServerPort    = 23402;
@@ -29,7 +37,11 @@ class Config {
     this.mainDir             = path.join(os.homedir(),   FRONTIER_DIR);
     this.frontierLogFilePath = path.join(this.mainDir, 'frontier.log');
 
-    this.resolverFilePath   = '/etc/resolver/test';
+    this.keyFilePath  = path.join(this.mainDir, 'frontier.key');
+    this.certFilePath = path.join(this.mainDir, 'frontier.crt');
+    this.pfxFilePath  = path.join(this.mainDir, 'frontier.pfx');
+
+    this.resolverFilePath   = `/etc/resolver/${this.domain}`;
     this.pfAnchorName       = 'frontier';
     this.pfAnchorFilePath   = `/etc/pf.anchors/${this.pfAnchorName}`;
     this.pfConfFilePath     = `/etc/pf.${this.pfAnchorName}.conf`;

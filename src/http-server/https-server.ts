@@ -18,7 +18,7 @@ class HTTPSServer {
     if (this.server) { this.stop(); }
 
     this.server = https.createServer({
-      pfx:  fs.readFileSync('server.pfx'),
+      pfx:  fs.readFileSync(config.pfxFilePath),
     });
 
     this.server.on('request', this.handler.handleRequest);

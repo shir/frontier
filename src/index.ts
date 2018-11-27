@@ -3,6 +3,7 @@ import program from 'commander';
 import Frontier from './frontier';
 import ResolverInstaller from './installer/resolver';
 import FirewallInstaller from './installer/firewall';
+import CertificateGenerator from './certificate-generator';
 
 program
   .version('0.0.1');
@@ -27,6 +28,13 @@ program
   .action(() => {
     new ResolverInstaller().perform();
     new FirewallInstaller().perform();
+  });
+
+program
+  .command('gencert')
+  .description('Generate self-signed certificate to use for HTTPS')
+  .action(() => {
+    new CertificateGenerator().perform();
   });
 
 program

@@ -24,7 +24,7 @@ class ApplicationConfig {
     const jsonConfig = JSON.parse(fs.readFileSync(configFilePath, 'utf8'));
 
     this.name        = jsonConfig.name || path.basename(appDir);
-    this.hostname    = jsonConfig.hostname || `${this.name}.test`;
+    this.hostname    = jsonConfig.hostname || `${this.name}.${config.domain}`;
     this.port        = jsonConfig.port || port;
     this.directory   = jsonConfig.directory || fs.realpathSync(appDir);
     this.command     = jsonConfig.command;
