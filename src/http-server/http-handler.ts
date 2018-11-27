@@ -21,14 +21,14 @@ class HTTPHandler {
     this.httpsServer = new HTTPSServer(this);
   }
 
-  public showError = (response: http.ServerResponse, error: string, httpCode: number = 404) => {
+  private showError = (response: http.ServerResponse, error: string, httpCode: number = 404) => {
     logger.error(`[HTTP] ${error}`);
     response.writeHead(httpCode, { 'Content-Type':'text/plain' });
     response.write(error);
     response.end();
   }
 
-  public applicationForRequest = (request: http.IncomingMessage): Application => {
+  private applicationForRequest = (request: http.IncomingMessage): Application => {
     if (!request.headers.host) {
       throw new Error(`No host in request!`);
     }
@@ -42,6 +42,27 @@ class HTTPHandler {
     return app;
   }
 
+  private startApplication = (
+    app:      Application,
+    request:  http.IncomingMessage,
+    response: http.ServerResponse,
+  ) => {
+    app.startAndWait().then(() => {
+      this.proxy!.web(request, response, {
+        target: {
+          protocol: 'http',
+          hostname: 'localhost',
+          port:     String(app.config.port),
+        },
+        xfwd: true,
+        ws:   true,
+      });
+      app.killOnIdle();
+    }).catch((e) => {
+      this.showError(response, `Error on accessing application ${app.name}: ${e.message}`);
+    });
+  }
+
   public handleRequest = (request: http.IncomingMessage, response: http.ServerResponse): void => {
     try {
       const app = this.applicationForRequest(request);
@@ -49,22 +70,12 @@ class HTTPHandler {
       logger.debug(`[HTTP] ${app.name}: ${request.method} ${request.url}`);
 
       if (app.shouldRestart) {
-        app.stop();
+        app.stop().then(() => {
+          this.startApplication(app, request, response);
+        })
+      } else {
+        this.startApplication(app, request, response);
       }
-      app.startAndWait().then(() => {
-        this.proxy!.web(request, response, {
-          target: {
-            protocol: 'http',
-            hostname: 'localhost',
-            port:     String(app.config.port),
-          },
-          xfwd: true,
-          ws:   true,
-        });
-        app.killOnIdle();
-      }).catch((e) => {
-        this.showError(response, `Error on accessing application ${app.name}: ${e.message}`);
-      });
     } catch (e) {
       this.showError(response, e.message);
     }
@@ -89,7 +100,7 @@ class HTTPHandler {
     }
   }
 
-  start = (): void => {
+  public start = (): void => {
     this.stop();
 
     this.proxy  = HttpProxy.createProxyServer();
@@ -99,7 +110,7 @@ class HTTPHandler {
     this.httpsServer.start();
   }
 
-  stop = (): void => {
+  public stop = (): void => {
     this.httpServer.stop();
     this.httpsServer.stop();
     if (this.proxy) {

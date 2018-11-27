@@ -85,24 +85,29 @@ class Application {
     });
   }
 
-  public stop = (): void => {
-    logger.info(`[${this.name}] stop`);
-    if (this.process) {
-      this.process.kill();
-      this.process = null;
-    }
-    if (this.watcher) {
-      this.watcher.close();
-      this.watcher = null;
-    }
-    if (this.logStream) {
-      this.logStream.end();
-      this.logStream = null;
-    }
-    if (this.idleTimer) {
-      timers.clearTimeout(this.idleTimer);
-      this.idleTimer = null;
-    }
+  public stop = (): Promise<void> => {
+    return new Promise((resolve) => {
+      logger.info(`[${this.name}] stop`);
+      if (this.watcher) {
+        this.watcher.close();
+        this.watcher = null;
+      }
+      if (this.logStream) {
+        this.logStream.end();
+        this.logStream = null;
+      }
+      if (this.idleTimer) {
+        timers.clearTimeout(this.idleTimer);
+        this.idleTimer = null;
+      }
+      if (this.process) {
+        this.process.on('exit', resolve);
+        this.process.kill();
+        this.process = null;
+      } else {
+        resolve();
+      }
+    });
   }
 
   public startAndWait = async () => {
