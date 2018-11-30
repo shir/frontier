@@ -3,6 +3,7 @@ import * as fs from 'fs';
 import * as net from 'net';
 import * as timers from 'timers';
 import * as childProcess from 'child_process';
+import logger from './logger';
 
 function ensureDirExists(dir: string) {
   path.normalize(dir).split(path.sep).reduce(
@@ -24,6 +25,7 @@ function isServiceAvailable(port: number): Promise<boolean> {
     const socket = new net.Socket();
 
     socket.on('error', (e: Error) => {
+      socket.end();
       // @ts-ignore TS2339
       if (e.code === 'ECONNREFUSED') {
         resolve(false);
@@ -51,12 +53,12 @@ function waitForService(
       return;
     }
 
-    let intervalObj: NodeJS.Timer | null = null;
+    let timeoutObj: NodeJS.Timer | null = null;
 
     const clear = () => {
-      if (intervalObj) {
-        timers.clearInterval(intervalObj);
-        intervalObj = null;
+      if (timeoutObj) {
+        timers.clearTimeout(timeoutObj);
+        timeoutObj = null;
       }
       if (process) {
         process.removeListener('exit',  handleError);
@@ -78,9 +80,13 @@ function waitForService(
     process.once('error', handleError);
 
     const checkServiceIsAvailable = () => {
+      logger.debug(`checking service on port ${port} is available`);
       isServiceAvailable(port).then((isAvailable) => {
         if (!isAvailable) {
-          setTimeout(
+          if (timeoutObj) {
+            timers.clearTimeout(timeoutObj);
+          }
+          timeoutObj = timers.setTimeout(
             checkServiceIsAvailable,
             interval,
           );
