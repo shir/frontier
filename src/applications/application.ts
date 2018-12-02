@@ -140,7 +140,8 @@ class Application {
       () => {
         logger.info(
           `[${this.name}] Stopping after ${Number(this.config.idleTimeout) / (1000 * 60)}`
-          + ` minutes idle.`);
+            + ' minutes idle.',
+        );
         this.stop();
       },
       this.config.idleTimeout,

@@ -67,4 +67,3 @@ class ApplicationConfig {
 }
 
 export default ApplicationConfig;
-

@@ -17,7 +17,7 @@ class Config {
 
   public readonly keyFilePath:  string;
   public readonly certFilePath: string;
-  public readonly pfxFilePath:  string
+  public readonly pfxFilePath:  string;
 
   public readonly resolverFilePath:   string;
   public readonly pfAnchorName:       string;
@@ -26,7 +26,7 @@ class Config {
   public readonly pfLaunchDaemonPath: string;
 
   constructor() {
-    this.domain = 'dev.test'
+    this.domain = 'dev.test';
 
     this.dnsServerPort      = 23400;
     this.httpServerPort     = 23401;

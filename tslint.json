@@ -7,5 +7,5 @@
   "rules": {
     "import-name": false,
     "variable-name": [true, "ban-keywords", "check-format", "allow-leading-underscore"]
-  },
+  }
 }

@@ -30,7 +30,7 @@ class HTTPHandler {
 
   private applicationForRequest = (request: http.IncomingMessage): Application => {
     if (!request.headers.host) {
-      throw new Error(`No host in request!`);
+      throw new Error('No host in request!');
     }
 
     const app = this.appManager.appByHostname(request.headers.host);
@@ -72,7 +72,7 @@ class HTTPHandler {
       if (app.shouldRestart) {
         app.stop().then(() => {
           this.startApplication(app, request, response);
-        })
+        });
       } else {
         this.startApplication(app, request, response);
       }
@@ -82,7 +82,7 @@ class HTTPHandler {
   }
 
   public handleClose = () => {
-    logger.info(`[HTTP] connection closed`);
+    logger.info('[HTTP] connection closed');
   }
 
   public handleError = (e: Error) => {

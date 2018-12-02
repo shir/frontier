@@ -51,11 +51,10 @@ declare module 'dns2' {
     static CLASS: PacketClass;
     readonly questions: PacketQuestion[];
     readonly answers: object[];
-    readonly header: { [key: string]: number }
+    readonly header: { [key: string]: number };
 
     constructor(request: Packet);
   }
-
 
   export function createServer(options?: {}, listener?: listener): Server;
 }
