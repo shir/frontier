@@ -36,9 +36,16 @@ class HTTPSServer {
   public start = (): void => {
     if (this.server) { this.stop(); }
 
-    this.server = https.createServer({
-      pfx: fs.readFileSync(config.pfxFilePath),
-    });
+    let pfxFile = null;
+    try {
+      pfxFile = fs.readFileSync(config.pfxFilePath);
+    } catch (e) {
+      logger.error(`[HTTPS] Can\'t read pfx file: ${e}`);
+      logger.error('[HTTPS] Not started');
+      return;
+    }
+
+    this.server = https.createServer({ pfx: pfxFile! });
 
     this.server.on('request',    this.handler.handleRequest);
     this.server.on('close',      this.handler.handleClose);

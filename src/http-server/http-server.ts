@@ -17,10 +17,10 @@ class HTTPServer {
   }
 
   private handleConnect = (socket: net.Socket) => {
-    logger.debug('[HTTPS] new connection');
+    logger.debug('[HTTP] new connection');
     this.sockets.add(socket);
     socket.on('close', () => {
-      logger.debug('[HTTPS] close connection');
+      logger.debug('[HTTP] close connection');
       this.sockets.delete(socket);
     });
   }
