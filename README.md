@@ -21,12 +21,12 @@ $ git clone https://github.com/shir/frontier.git && cd frontier
 
 Install required packages:
 ```sh
-$ npm install
+$ yarn install
 ```
 
 Build project:
 ```sh
-$ npm run build && npm run templates
+$ npm yarn build && npm yarn templates
 ```
 
 Install resolver and firewall rules
