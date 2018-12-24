@@ -20,6 +20,10 @@ function ensureDirExists(dir: string) {
   );
 }
 
+function isPathDirectory(dirPath: string) {
+  return fs.statSync(dirPath).isDirectory();
+}
+
 function isServiceAvailable(port: number): Promise<boolean> {
   return new Promise((resolve, reject) => {
     const socket = new net.Socket();
@@ -101,4 +105,4 @@ function waitForService(
   });
 }
 
-export { ensureDirExists, isServiceAvailable, waitForService };
+export { ensureDirExists, isPathDirectory, isServiceAvailable, waitForService };

@@ -3,6 +3,7 @@ import * as path from 'path';
 
 import config from '../config';
 import logger from '../logger';
+import { isPathDirectory } from '../utils';
 
 import Application from './application';
 import ApplicationConfig from './application-config';
@@ -28,10 +29,12 @@ class ApplicationManager {
 
     fs.readdirSync(config.mainDir).forEach((file) => {
       try {
-        const appConfig = new ApplicationConfig(
-          path.join(config.mainDir, file),
-          this.nextFreePort(),
-        );
+        const filePath = path.join(config.mainDir, file);
+        if (!isPathDirectory(filePath)) {
+          return;
+        }
+
+        const appConfig = new ApplicationConfig(filePath, this.nextFreePort());
         this.addApplication(appConfig);
       } catch (e) {
         logger.error(e.message);
