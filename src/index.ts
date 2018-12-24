@@ -9,6 +9,13 @@ program
   .version('0.0.1');
 
 program
+  .command('help')
+  .description('Displays help')
+  .action(() => {
+    program.help();
+  });
+
+program
   .command('install-resolver')
   .description('Install resolver part for Frontier')
   .action(() => {
@@ -54,3 +61,7 @@ program
   });
 
 program.parse(process.argv);
+
+if (program.args.length === 0) {
+  program.help();
+}
